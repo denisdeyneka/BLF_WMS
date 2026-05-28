@@ -1,0 +1,17 @@
+{
+  "name": "blf_wms",
+  "version": "1.0.0",
+  "main": "main.cjs",
+  "type": "module",
+  "scripts": {
+    "start": "electron .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Deineka Denys",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "electron": "^42.3.0"
+  }
+}
