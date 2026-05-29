@@ -2,10 +2,19 @@ import warehouse from './modules/data/warehouse.js';
 
 import { renderWarehouse } from './modules/ui/renderWarehouse.js';
 import { renderTable } from './modules/ui/renderTable.js';
-
 import { createShell } from './modules/ui/layout/shell.js';
 
 console.log('APP START');
+
+let currentView = 'products';
+if (currentView === 'products') {
+    appContainer.appendChild(renderProductLibrary(window.api));
+}
+
+console.log('API test:', window.api.ping());
+window.api.getProducts().then(console.log);
+
+
 
 // контейнер куда монтируем всё приложение
 document.body.innerHTML = '';
