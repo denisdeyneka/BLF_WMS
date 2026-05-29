@@ -1,7 +1,14 @@
 // Подключаем Electron
 // app - управляет жизненным циклом приложения
 // BrowserWindow - создаёт окна приложения
+
+const { initDB } = require('./modules/db/database.cjs');
+
+initDB();
+
+
 const { app, BrowserWindow } = require('electron');
+
 
 // Функция создания главного окна приложения
 function createWindow() {

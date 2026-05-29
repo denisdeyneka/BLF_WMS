@@ -12,6 +12,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "electron": "^42.3.0"
+    "electron": "^42.3.0",
+    "sql.js": "^1.14.1"
   }
 }
