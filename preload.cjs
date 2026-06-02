@@ -1,40 +1,55 @@
 // bridge между renderer и electron backend
 
-const {
-    contextBridge,
-    ipcRenderer
-} = require('electron');
+// =====================================
+// ELECTRON PRELOAD (API BRIDGE)
+// =====================================
 
+const { contextBridge, ipcRenderer } = require('electron');
 
-contextBridge.exposeInMainWorld(
+console.log('PRELOAD LOADED');
 
-    'api',
+// =====================================
+// EXPOSE API TO RENDERER
+// =====================================
 
-    {
+contextBridge.exposeInMainWorld('api', {
 
-        ping: () => 'pong',
+    // ---------------------
+    // TEST
+    // ---------------------
+    ping: () => 'pong',
 
+    // ---------------------
+    // READ
+    // ---------------------
+    getProducts: () =>
+        ipcRenderer.invoke('products:getAll'),
 
-        getProducts: () =>
+    // ---------------------
+    // CREATE
+    // ---------------------
+    createProduct: (data) =>
+        ipcRenderer.invoke(
+            'products:create',
+            data
+        ),
 
-            ipcRenderer.invoke(
-                'products:getAll'
-            ),
+    // ---------------------
+    // UPDATE  ← ДОБАВИЛИ ЭТО
+    // ---------------------
+    updateProduct: (id, data) =>
+        ipcRenderer.invoke(
+            'products:update',
+            id,
+            data
+        ),
 
-
-        createProduct: (data) =>
-
-            ipcRenderer.invoke(
-                'products:create',
-                data
-            ),
-
-
-        deleteProduct: (id) =>
-
-            ipcRenderer.invoke(
-                'products:delete',
-                id
-            )
-    }
-);
+    // ---------------------
+    // DELETE
+    // ---------------------
+    deleteProduct: (id) =>
+        ipcRenderer.invoke(
+            'products:delete',
+            id
+        )
+});

@@ -46,17 +46,27 @@ function createProduct(data) {
  * Обновить продукт
  */
 function updateProduct(id, data) {
-    return db.run(`
+
+    const db = require('../db/dbQuery.cjs');
+
+    const sql = `
         UPDATE product_library
         SET
-            product_name = '${data.product_name}',
-            description = '${data.description}',
-            form = '${data.form}',
-            dosage = '${data.dosage}',
-            packaging = '${data.packaging}',
-            shelf_life = '${data.shelf_life}'
+            product_name = '${escape(data.product_name)}',
+            description = '${escape(data.description)}',
+            form = '${escape(data.form)}',
+            dosage = '${escape(data.dosage)}',
+            packaging = '${escape(data.packaging)}',
+            shelf_life = '${escape(data.shelf_life)}'
         WHERE id = ${id}
-    `);
+    `;
+
+    return db.run(sql);
+}
+
+function escape(str) {
+    if (!str) return '';
+    return String(str).replace(/'/g, "''");
 }
 
 /**

@@ -59,6 +59,15 @@ ipcMain.handle(
     }
 );
 
+//edit product
+ipcMain.handle(
+    'products:update',
+    (event, id, data) => {
+
+        return productService.updateProduct(id, data);
+    }
+);
+
 
 // ======================================
 // CREATE WINDOW

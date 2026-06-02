@@ -1,5 +1,5 @@
 // ==============================
-// PRODUCT LIBRARY UI
+// PRODUCT LIBRARY UI (STABLE VERSION)
 // ==============================
 
 export function renderProductLibrary(api) {
@@ -16,6 +16,12 @@ export function renderProductLibrary(api) {
     container.appendChild(title);
 
     // =========================
+    // FORM STATE (future-ready)
+    // =========================
+    let editMode = false;
+    let editId = null;
+
+    // =========================
     // FORM
     // =========================
     const form = document.createElement('div');
@@ -25,9 +31,15 @@ export function renderProductLibrary(api) {
         <input id="name" placeholder="Product name" />
         <input id="desc" placeholder="Description" />
         <button id="addBtn">Add</button>
+        <button id="cancelBtn" style="display:none;">Cancel</button>
     `;
 
     container.appendChild(form);
+
+    const nameInput = form.querySelector('#name');
+    const descInput = form.querySelector('#desc');
+    const addBtn = form.querySelector('#addBtn');
+    const cancelBtn = form.querySelector('#cancelBtn');
 
     // =========================
     // LIST
@@ -39,6 +51,7 @@ export function renderProductLibrary(api) {
     // LOAD PRODUCTS
     // =========================
     async function load() {
+
         const products = await api.getProducts();
 
         list.innerHTML = '';
@@ -57,51 +70,125 @@ export function renderProductLibrary(api) {
             row.style.marginBottom = '8px';
             row.style.borderRadius = '6px';
 
-            row.innerHTML = `
+            // content
+            const content = document.createElement('div');
+
+            content.innerHTML = `
                 <b>${p.product_name}</b><br/>
-                <small>${p.description || ''}</small><br/>
+                <small>${p.description || ''}</small>
             `;
 
-            // delete button
-            const btn = document.createElement('button');
-            btn.textContent = 'Delete';
+            row.appendChild(content);
 
-            btn.onclick = async () => {
+            // =========================
+            // ACTIONS
+            // =========================
+            const actions = document.createElement('div');
+            actions.style.marginTop = '8px';
+
+            // DELETE
+            const delBtn = document.createElement('button');
+            delBtn.textContent = 'Delete';
+
+            delBtn.onclick = async () => {
                 await api.deleteProduct(p.id);
                 await load();
             };
 
-            row.appendChild(btn);
+            // EDIT (prepare)
+            const editBtn = document.createElement('button');
+            editBtn.textContent = 'Edit';
+            editBtn.style.marginLeft = '8px';
+
+            editBtn.onclick = () => {
+
+                editMode = true;
+                editId = p.id;
+
+                nameInput.value = p.product_name;
+                descInput.value = p.description || '';
+
+                addBtn.textContent = 'Update';
+                cancelBtn.style.display = 'inline-block';
+            };
+
+            actions.appendChild(delBtn);
+            actions.appendChild(editBtn);
+
+            row.appendChild(actions);
 
             list.appendChild(row);
         });
     }
 
     // =========================
-    // ADD PRODUCT
+    // ADD / UPDATE PRODUCT
     // =========================
-    form.querySelector('#addBtn').onclick = async () => {
+    addBtn.onclick = async () => {
 
-        const name = form.querySelector('#name').value.trim();
-        const desc = form.querySelector('#desc').value.trim();
+        const product_name = nameInput.value.trim();
+        const description = descInput.value.trim();
 
-        if (!name) return;
+        if (!product_name) return;
 
-        await api.createProduct({
-            product_name: name,
-            description: desc,
-            form: '',
-            dosage: '',
-            packaging: '',
-            shelf_life: ''
-        });
+        // =========================
+        // CREATE
+        // =========================
+        if (!editMode) {
 
-        form.querySelector('#name').value = '';
-        form.querySelector('#desc').value = '';
+            await api.createProduct({
+                product_name,
+                description,
+                form: '',
+                dosage: '',
+                packaging: '',
+                shelf_life: ''
+            });
 
-        await load();
+        } else {
+
+            // =========================
+            // UPDATE
+            // =========================
+            await api.updateProduct(editId, {
+                product_name,
+                description,
+                form: '',
+                dosage: '',
+                packaging: '',
+                shelf_life: ''
+            });
+
+            editMode = false;
+            editId = null;
+        }
+
+        // reset form
+        nameInput.value = '';
+        descInput.value = '';
+
+        addBtn.textContent = 'Add';
+        cancelBtn.style.display = 'none';
+
+        setTimeout(load, 50);
     };
 
+    // =========================
+    // CANCEL EDIT
+    // =========================
+    cancelBtn.onclick = () => {
+
+        editMode = false;
+        editId = null;
+
+        nameInput.value = '';
+        descInput.value = '';
+
+        addBtn.textContent = 'Add';
+        cancelBtn.style.display = 'none';
+    };
+
+    // initial load
     load();
 
     return container;
