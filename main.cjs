@@ -1,46 +1,117 @@
-// Подключаем Electron
-// app - управляет жизненным циклом приложения
-// BrowserWindow - создаёт окна приложения
+// ======================================
+// ELECTRON MAIN PROCESS
+// ======================================
 
+// Electron
+const { app, BrowserWindow, ipcMain } = require('electron');
+
+const path = require('path');
+
+// инициализация БД
 const { initDB } = require('./modules/db/database.cjs');
+
+// сервис библиотеки препаратов
+const productService =
+require('./modules/services/productLibraryService.cjs');
+
+
+// ======================================
+// DATABASE INIT
+// ======================================
 
 initDB();
 
 
-const { app, BrowserWindow } = require('electron');
+// ======================================
+// IPC HANDLERS
+// связь renderer -> backend
+// ======================================
+
+// получить все продукты
+ipcMain.handle(
+    'products:getAll',
+
+    () => {
+
+        return productService.getAllProducts();
+    }
+);
 
 
-// Функция создания главного окна приложения
+// создать продукт
+ipcMain.handle(
+    'products:create',
+
+    (event, data) => {
+
+        return productService.createProduct(data);
+    }
+);
+
+
+// удалить продукт
+ipcMain.handle(
+    'products:delete',
+
+    (event, id) => {
+
+        return productService.deleteProduct(id);
+    }
+);
+
+
+// ======================================
+// CREATE WINDOW
+// ======================================
+
 function createWindow() {
 
-  // Создаём окно
-  const win = new BrowserWindow({
+    const win = new BrowserWindow({
 
-    // Начальный размер окна
-    width: 1200,
-    height: 800,
+        width: 1200,
 
-    // Настройки поведения встроенного браузера
-    webPreferences: {
+        height: 800,
 
-      // Разрешаем использовать Node.js внутри renderer
-      // Нужно для работы Electron + наших модулей
-      nodeIntegration: true,
+        webPreferences: {
 
-      // Отключаем изоляцию контекста
-      // Сейчас это упрощает разработку
-      contextIsolation: false,
-    },
-  });
+            // bridge renderer <-> backend
+            preload: path.join(
+                __dirname,
+                'preload.cjs'
+            ),
 
-  // Загружаем стартовую HTML страницу
-  win.loadFile('index.html');
+            // renderer НЕ получает require()
+            nodeIntegration: false,
+
+            // включаем безопасный bridge
+            contextIsolation: true
+        }
+    });
+
+
+    // стартовая страница
+    win.loadFile('index.html');
 }
 
 
-// Когда Electron полностью готов — создаём окно
+// ======================================
+// APP READY
+// ======================================
+
 app.whenReady().then(() => {
 
-  createWindow();
+    createWindow();
+});
 
+
+// ======================================
+// APP CLOSE
+// ======================================
+
+app.on('window-all-closed', () => {
+
+    if (process.platform !== 'darwin') {
+
+        app.quit();
+    }
 });

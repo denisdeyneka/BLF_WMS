@@ -1,53 +1,26 @@
-import warehouse from './modules/data/warehouse.js';
-
-import { renderWarehouse } from './modules/ui/renderWarehouse.js';
-import { renderTable } from './modules/ui/renderTable.js';
-import { createShell } from './modules/ui/layout/shell.js';
+import { renderProductLibrary } from './modules/ui/productLibrary.js';
 
 console.log('APP START');
 
-let currentView = 'products';
-if (currentView === 'products') {
-    appContainer.appendChild(renderProductLibrary(window.api));
-}
-
-console.log('API test:', window.api.ping());
-window.api.getProducts().then(console.log);
-
-
-
-// контейнер куда монтируем всё приложение
+// очищаем body
 document.body.innerHTML = '';
 
-// состояние текущего вида
-let currentView = 'map';
+// контейнер приложения
+const appContainer = document.createElement('div');
 
-// создаём shell
-const appShell = createShell(handleViewChange);
-document.body.appendChild(appShell);
+appContainer.id = 'app';
 
-// контейнер контента
-const appContainer = document.getElementById('app');
+document.body.appendChild(appContainer);
 
-// рендер
+// рендерим библиотеку препаратов
 function render() {
 
-  appContainer.innerHTML = '';
+    appContainer.innerHTML = '';
 
-  if (currentView === 'map') {
-    appContainer.appendChild(renderWarehouse(warehouse));
-  }
-
-  if (currentView === 'table') {
-    appContainer.appendChild(renderTable(warehouse));
-  }
+    appContainer.appendChild(
+        renderProductLibrary(window.api)
+    );
 }
 
-// обработка переключения
-function handleViewChange(view) {
-  currentView = view;
-  render();
-}
-
-// первый запуск
+console.log(window.api);
 render();

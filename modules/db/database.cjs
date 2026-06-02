@@ -27,6 +27,12 @@ async function initDB() {
     db.run(schema);
 
     console.log('[DB] initialized (sql.js)');
+    console.log('[DB] initialized (sql.js)');
+    console.log(
+        db.exec(
+            "SELECT name FROM sqlite_master WHERE type='table'"
+        )
+    );
 
     // сохраняем базу в файл
     saveDB();
@@ -46,3 +52,5 @@ module.exports = {
     getDB: () => db,
     saveDB
 };
+
+console.log('[DB] schema executed');
