@@ -2,8 +2,18 @@
 // PRODUCT LIBRARY UI (ERP v2)
 // ==============================
 
+
 export function renderProductLibrary(api) {
 
+    const categoryMap = {
+        lz: 'Лікарські засоби',
+        md: 'мед. вироби',
+        vet: 'Ветеринарні препарати',
+        diet: 'Дієтичні добавки/вода',
+        cosmetic: 'Косметичні засоби'
+    };
+
+  
     const container = document.createElement('div');
     container.className = 'product-library';
 
@@ -52,7 +62,7 @@ export function renderProductLibrary(api) {
             <select id="category">
                 <option value="">Category</option>
                 <option value="lz">ЛЗ</option>
-                <option value="medical">Мед. вироби</option>
+                <option value="md">Мед. вироби</option>
                 <option value="vet">Ветеринарні</option>
                 <option value="diet">Дієтичні</option>
                 <option value="cosmetic">Косметика</option>
@@ -205,12 +215,12 @@ async function save() {
 
         table.innerHTML = `
             <tr>
-                <th>Code</th>
-                <th>Name</th>
-                <th>Description</th>
-                <th>Category</th>
-                <th>Packaging</th>
-                <th>Actions</th>
+                <th class="col-code">Код</th>
+                <th>Назва</th>
+                <th>Опис (повна назва)</th>
+                <th class="col-category">Категорія</th>
+                <th>Первинне пакування</th>
+                <th class="col-actions">Дії</th>
             </tr>
         `;
 
@@ -218,16 +228,30 @@ async function save() {
 
             const row = document.createElement('tr');
 
-            row.innerHTML = `
-                <td>${p.code || ''}</td>
-                <td>${p.name || ''}</td>
-                <td class="col-description">${p.description || ''}</td>
-                <td>${p.category || ''}</td>
-                <td>${p.primary_packaging || ''}</td>
-                <td></td>
-            `;
+            const tdCode = document.createElement('td');
+            tdCode.className = 'col-code';
+            tdCode.textContent = p.code || '';
 
-            const actions = row.querySelector('td:last-child');
+            const tdName = document.createElement('td');
+            tdName.textContent = p.name || '';
+
+            const tdDesc = document.createElement('td');
+            tdDesc.className = 'col-description';
+            tdDesc.textContent = p.description || '';
+
+            const tdCat = document.createElement('td');
+            tdCat.className = 'col-category';
+            tdCat.textContent =
+                categoryMap[(p.category || '').toLowerCase()] || p.category || '';
+
+            const tdPack = document.createElement('td');
+            tdPack.textContent = p.primary_packaging || '';
+
+            const tdActions = document.createElement('td');
+            tdActions.className = 'col-actions';
+
+            const wrapper = document.createElement('div');
+            wrapper.className = 'actions-wrapper';
 
             const edit = document.createElement('button');
             edit.textContent = 'Edit';
@@ -240,11 +264,21 @@ async function save() {
                 await load();
             };
 
-            actions.appendChild(edit);
-            actions.appendChild(del);
+            wrapper.appendChild(edit);
+            wrapper.appendChild(del);
+            tdActions.appendChild(wrapper);
+
+            row.appendChild(tdCode);
+            row.appendChild(tdName);
+            row.appendChild(tdDesc);
+            row.appendChild(tdCat);
+            row.appendChild(tdPack);
+            row.appendChild(tdActions);
 
             table.appendChild(row);
         });
+
+
         console.log('PRODUCTS:', products);
     }
 

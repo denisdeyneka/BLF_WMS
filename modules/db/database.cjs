@@ -13,29 +13,34 @@ const schema = fs.readFileSync(schemaPath, 'utf-8');
 let db;
 
 async function initDB() {
+
     const SQL = await initSqlJs();
 
-    // если файл уже есть — загружаем
     if (fs.existsSync(dbFilePath)) {
+
         const fileBuffer = fs.readFileSync(dbFilePath);
+
         db = new SQL.Database(fileBuffer);
+
+        console.log('[DB] loaded existing database');
+
     } else {
+
         db = new SQL.Database();
+
+        db.run(schema);
+
+        saveDB();
+
+        console.log('[DB] created new database');
+
     }
 
-    // создаём таблицы
-    db.run(schema);
-
-    console.log('[DB] initialized (sql.js)');
-    console.log('[DB] initialized (sql.js)');
     console.log(
         db.exec(
             "SELECT name FROM sqlite_master WHERE type='table'"
         )
     );
-
-    // сохраняем базу в файл
-    saveDB();
 
     return db;
 }
@@ -52,5 +57,3 @@ module.exports = {
     getDB: () => db,
     saveDB
 };
-
-console.log('[DB] schema executed');
