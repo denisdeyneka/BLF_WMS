@@ -1,77 +1,100 @@
 // =====================================
-// PRODUCT LIBRARY SERVICE (CRUD layer)
+// PRODUCT LIBRARY SERVICE (CRUD layer v2)
 // =====================================
 
 const db = require('../db/dbQuery.cjs');
 
-/**
- * Получить все активные продукты
- */
+// ==============================
+// SELECT ALL
+// ==============================
 function getAllProducts() {
     return db.select(`
-        SELECT *
+        SELECT
+            id,
+            code,
+            name,
+            category,
+            description,
+            primary_packaging,
+            fill_volume,
+            group_packaging,
+            units_per_box,
+            shelf_life,
+            storage_conditions,
+            registration_certificate,
+            country,
+            is_active
         FROM product_library
         WHERE is_active = 1
-        ORDER BY product_name
+        ORDER BY name
     `);
 }
 
-/**
- * Создать новый продукт
- */
+// ==============================
+// CREATE
+// ==============================
 function createProduct(data) {
     return db.run(`
         INSERT INTO product_library (
-            product_name,
+            code,
+            name,
+            category,
             description,
-            form,
-            dosage,
-            packaging,
+            primary_packaging,
+            fill_volume,
+            group_packaging,
+            units_per_box,
             shelf_life,
+            storage_conditions,
+            registration_certificate,
+            country,
             is_active
         )
         VALUES (
-            '${data.product_name}',
-            '${data.description}',
-            '${data.form}',
-            '${data.dosage}',
-            '${data.packaging}',
-            '${data.shelf_life}',
+            '${escape(data.code)}',
+            '${escape(data.name)}',
+            '${escape(data.category)}',
+            '${escape(data.description)}',
+            '${escape(data.primary_packaging)}',
+            '${escape(data.fill_volume)}',
+            '${escape(data.group_packaging)}',
+            '${escape(data.units_per_box)}',
+            '${escape(data.shelf_life)}',
+            '${escape(data.storage_conditions)}',
+            '${escape(data.registration_certificate)}',
+            '${escape(data.country)}',
             1
         )
     `);
 }
 
-/**
- * Обновить продукт
- */
+// ==============================
+// UPDATE (FIXED - was old schema)
+// ==============================
 function updateProduct(id, data) {
 
-    const db = require('../db/dbQuery.cjs');
-
-    const sql = `
+    return db.run(`
         UPDATE product_library
         SET
-            product_name = '${escape(data.product_name)}',
+            code = '${escape(data.code)}',
+            name = '${escape(data.name)}',
+            category = '${escape(data.category)}',
             description = '${escape(data.description)}',
-            form = '${escape(data.form)}',
-            dosage = '${escape(data.dosage)}',
-            packaging = '${escape(data.packaging)}',
-            shelf_life = '${escape(data.shelf_life)}'
+            primary_packaging = '${escape(data.primary_packaging)}',
+            fill_volume = '${escape(data.fill_volume)}',
+            group_packaging = '${escape(data.group_packaging)}',
+            units_per_box = '${escape(data.units_per_box)}',
+            shelf_life = '${escape(data.shelf_life)}',
+            storage_conditions = '${escape(data.storage_conditions)}',
+            registration_certificate = '${escape(data.registration_certificate)}',
+            country = '${escape(data.country)}'
         WHERE id = ${id}
-    `;
-
-    return db.run(sql);
+    `);
 }
 
-function escape(str) {
-    if (!str) return '';
-    return String(str).replace(/'/g, "''");
-}
-
-/**
- * Мягкое удаление
- */
+// ==============================
+// DELETE (soft)
+// ==============================
 function deleteProduct(id) {
     return db.run(`
         UPDATE product_library
@@ -80,9 +103,9 @@ function deleteProduct(id) {
     `);
 }
 
-/**
- * Получить один продукт
- */
+// ==============================
+// GET BY ID
+// ==============================
 function getProductById(id) {
     const result = db.select(`
         SELECT *
@@ -94,17 +117,28 @@ function getProductById(id) {
     return result[0] || null;
 }
 
-/**
- * поиск по имени
- */
+// ==============================
+// SEARCH (FIXED)
+// ==============================
 function searchProducts(query) {
     return db.select(`
         SELECT *
         FROM product_library
         WHERE is_active = 1
-          AND product_name LIKE '%${query}%'
-        ORDER BY product_name
+          AND (
+              name LIKE '%${query}%'
+              OR code LIKE '%${query}%'
+          )
+        ORDER BY name
     `);
+}
+
+// ==============================
+// ESCAPE
+// ==============================
+function escape(str) {
+    if (!str) return '';
+    return String(str).replace(/'/g, "''");
 }
 
 module.exports = {

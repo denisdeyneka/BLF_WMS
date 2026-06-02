@@ -1,37 +1,41 @@
 .product-library {
-  height: 100%;
   display: flex;
   flex-direction: column;
+  height: 100%;
 }
 
 .product-header {
   display: flex;
   justify-content: space-between;
   padding: 10px;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid #ccc;
 }
 
-.product-body {
-  display: flex;
-  flex: 1;
-  overflow: hidden;
+.product-table {
+  width: 100%;
+  border-collapse: collapse;
 }
 
-.product-table-wrap {
-  flex: 1;
-  overflow: auto;
+.product-table th,
+.product-table td {
+  padding: 8px;
+  border-bottom: 1px solid #eee;
 }
 
 .product-drawer {
+  position: fixed;
+  right: 0;
+  top: 0;
   width: 0;
+  height: 100%;
   overflow: hidden;
-  border-left: 1px solid var(--border);
-  transition: 0.25s;
   background: white;
+  border-left: 1px solid #ccc;
+  transition: 0.25s;
 }
 
 .product-drawer--open {
-  width: 320px;
+  width: 350px;
 }
 
 .product-drawer__inner {
@@ -39,7 +43,17 @@
 }
 
 .product-drawer__actions {
-  margin-top: 10px;
   display: flex;
   gap: 10px;
+  margin-top: 10px;
+}
+
+.btn {
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+.btn--primary {
+  background: #2d6cdf;
+  color: white;
 }

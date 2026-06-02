@@ -1,5 +1,5 @@
 // ==============================
-// PRODUCT LIBRARY UI (CLEAN SCSS VERSION)
+// PRODUCT LIBRARY UI (ERP v2)
 // ==============================
 
 export function renderProductLibrary(api) {
@@ -14,7 +14,7 @@ export function renderProductLibrary(api) {
     header.className = 'product-header';
 
     const title = document.createElement('h2');
-    title.textContent = 'Product Library';
+    title.textContent = 'Product Registry';
 
     const addBtn = document.createElement('button');
     addBtn.className = 'btn btn--primary';
@@ -26,21 +26,12 @@ export function renderProductLibrary(api) {
     container.appendChild(header);
 
     // =========================
-    // BODY WRAP
-    // =========================
-    const body = document.createElement('div');
-    body.className = 'product-body';
-
-    // =========================
     // TABLE
     // =========================
-    const tableWrap = document.createElement('div');
-    tableWrap.className = 'product-table-wrap';
-
     const table = document.createElement('table');
     table.className = 'product-table';
 
-    tableWrap.appendChild(table);
+    container.appendChild(table);
 
     // =========================
     // DRAWER
@@ -53,13 +44,31 @@ export function renderProductLibrary(api) {
 
             <h3 id="dTitle">Product</h3>
 
+            <input id="code" placeholder="Code" />
             <input id="name" placeholder="Name" />
-            <input id="desc" placeholder="Description" />
-            <input id="form" placeholder="Form" />
-            <input id="dosage" placeholder="Dosage" />
-            <input id="pack" placeholder="Packaging" />
-            <input id="storage" placeholder="Storage" />
-            <input id="shelf" placeholder="Shelf life" />
+            <textarea id="description" placeholder="Full description (regulatory text)"></textarea>
+            <div id="errors" class="form-errors"></div>
+
+            <select id="category">
+                <option value="">Category</option>
+                <option value="lz">ЛЗ</option>
+                <option value="medical">Мед. вироби</option>
+                <option value="vet">Ветеринарні</option>
+                <option value="diet">Дієтичні</option>
+                <option value="cosmetic">Косметика</option>
+            </select>
+
+            <input id="primary_packaging" placeholder="Primary packaging" />
+            <input id="fill_volume" placeholder="Fill volume" />
+
+            <input id="group_packaging" placeholder="Group packaging (box)" />
+            <input id="units_per_box" placeholder="Units per box" />
+
+            <input id="shelf_life" placeholder="Shelf life" />
+            <input id="storage_conditions" placeholder="Storage conditions" />
+
+            <input id="registration_certificate" placeholder="Registration cert" />
+            <input id="country" placeholder="Country" />
 
             <div class="product-drawer__actions">
                 <button id="save" class="btn btn--primary">Save</button>
@@ -69,33 +78,36 @@ export function renderProductLibrary(api) {
         </div>
     `;
 
-    body.appendChild(tableWrap);
-    body.appendChild(drawer);
-    container.appendChild(body);
+    container.appendChild(drawer);
 
     // =========================
     // STATE
     // =========================
     let editId = null;
 
-    const $ = (sel) => drawer.querySelector(sel);
-
-    const dTitle = $('#dTitle');
+    const $ = (id) => drawer.querySelector(id);
 
     const fields = {
+        code: $('#code'),
         name: $('#name'),
-        desc: $('#desc'),
-        form: $('#form'),
-        dosage: $('#dosage'),
-        pack: $('#pack'),
-        storage: $('#storage'),
-        shelf: $('#shelf')
+        description: $('#description'),
+        category: $('#category'),
+        primary_packaging: $('#primary_packaging'),
+        fill_volume: $('#fill_volume'),
+        group_packaging: $('#group_packaging'),
+        units_per_box: $('#units_per_box'),
+        shelf_life: $('#shelf_life'),
+        storage_conditions: $('#storage_conditions'),
+        registration_certificate: $('#registration_certificate'),
+        country: $('#country')
     };
+
+    const dTitle = $('#dTitle');
 
     // =========================
     // DRAWER CONTROL
     // =========================
-    function openDrawer(product = null) {
+    function open(product = null) {
 
         drawer.classList.add('product-drawer--open');
 
@@ -103,13 +115,22 @@ export function renderProductLibrary(api) {
             dTitle.textContent = 'Edit Product';
             editId = product.id;
 
-            fields.name.value = product.product_name || '';
-            fields.desc.value = product.description || '';
-            fields.form.value = product.form || '';
-            fields.dosage.value = product.dosage || '';
-            fields.pack.value = product.packaging || '';
-            fields.storage.value = product.storage_conditions || '';
-            fields.shelf.value = product.shelf_life || '';
+            fields.code.value = product.code || '';
+            fields.name.value = product.name || '';
+            fields.description.value = product.description || '';
+            fields.category.value = product.category || '';
+
+            fields.primary_packaging.value = product.primary_packaging || '';
+            fields.fill_volume.value = product.fill_volume || '';
+            fields.group_packaging.value = product.group_packaging || '';
+            fields.units_per_box.value = product.units_per_box || '';
+
+            fields.shelf_life.value = product.shelf_life || '';
+            fields.storage_conditions.value = product.storage_conditions || '';
+
+            fields.registration_certificate.value = product.registration_certificate || '';
+            fields.country.value = product.country || '';
+
         } else {
             dTitle.textContent = 'New Product';
             editId = null;
@@ -118,36 +139,62 @@ export function renderProductLibrary(api) {
         }
     }
 
-    function closeDrawer() {
+    function close() {
         drawer.classList.remove('product-drawer--open');
     }
 
     // =========================
     // SAVE
     // =========================
-    async function save() {
+async function save() {
 
-        const data = {
-            product_name: fields.name.value.trim(),
-            description: fields.desc.value.trim(),
-            form: fields.form.value.trim(),
-            dosage: fields.dosage.value.trim(),
-            packaging: fields.pack.value.trim(),
-            storage_conditions: fields.storage.value.trim(),
-            shelf_life: fields.shelf.value.trim()
-        };
+    const data = {
+        code: fields.code.value.trim(),
+        name: fields.name.value.trim(),
+        description: fields.description.value.trim(),
+        category: fields.category.value,
 
-        if (!data.product_name) return;
+        primary_packaging: fields.primary_packaging.value.trim(),
+        fill_volume: fields.fill_volume.value.trim(),
 
-        if (editId) {
-            await api.updateProduct(editId, data);
-        } else {
-            await api.createProduct(data);
-        }
+        group_packaging: fields.group_packaging.value.trim(),
+        units_per_box: fields.units_per_box.value.trim(),
 
-        closeDrawer();
-        await load();
+        shelf_life: fields.shelf_life.value.trim(),
+        storage_conditions: fields.storage_conditions.value.trim(),
+
+        registration_certificate: fields.registration_certificate.value.trim(),
+        country: fields.country.value.trim()
+    };
+
+    const errors = validate(data);
+
+    const errorBox = drawer.querySelector('#errors');
+
+    // очистка UI
+    errorBox.innerHTML = '';
+    Object.values(fields).forEach(f => f.classList.remove('input-error'));
+
+    if (errors.length > 0) {
+
+        errorBox.innerHTML = errors.map(e => `<div>${e}</div>`).join('');
+
+        if (!data.code) fields.code.classList.add('input-error');
+        if (!data.name || data.name.length < 2) fields.name.classList.add('input-error');
+        if (!data.category) fields.category.classList.add('input-error');
+
+        return;
     }
+
+    if (editId) {
+        await api.updateProduct(editId, data);
+    } else {
+        await api.createProduct(data);
+    }
+
+    close();
+    await load();
+}
 
     // =========================
     // TABLE LOAD
@@ -157,10 +204,11 @@ export function renderProductLibrary(api) {
         const products = await api.getProducts();
 
         table.innerHTML = `
-            <tr class="product-table__header">
+            <tr>
+                <th>Code</th>
                 <th>Name</th>
-                <th>Form</th>
-                <th>Dosage</th>
+                <th>Description</th>
+                <th>Category</th>
                 <th>Packaging</th>
                 <th>Actions</th>
             </tr>
@@ -171,24 +219,22 @@ export function renderProductLibrary(api) {
             const row = document.createElement('tr');
 
             row.innerHTML = `
-                <td>${p.product_name}</td>
-                <td>${p.form || ''}</td>
-                <td>${p.dosage || ''}</td>
-                <td>${p.packaging || ''}</td>
+                <td>${p.code || ''}</td>
+                <td>${p.name || ''}</td>
+                <td class="col-description">${p.description || ''}</td>
+                <td>${p.category || ''}</td>
+                <td>${p.primary_packaging || ''}</td>
                 <td></td>
             `;
 
             const actions = row.querySelector('td:last-child');
 
             const edit = document.createElement('button');
-            edit.className = 'btn';
             edit.textContent = 'Edit';
-            edit.onclick = () => openDrawer(p);
+            edit.onclick = () => open(p);
 
             const del = document.createElement('button');
-            del.className = 'btn btn--danger';
             del.textContent = 'Delete';
-
             del.onclick = async () => {
                 await api.deleteProduct(p.id);
                 await load();
@@ -199,14 +245,38 @@ export function renderProductLibrary(api) {
 
             table.appendChild(row);
         });
+        console.log('PRODUCTS:', products);
     }
 
     // =========================
     // EVENTS
     // =========================
-    addBtn.onclick = () => openDrawer();
+    addBtn.onclick = () => open();
     drawer.querySelector('#save').onclick = save;
-    drawer.querySelector('#cancel').onclick = closeDrawer;
+    drawer.querySelector('#cancel').onclick = close;
+
+    // =========================
+    // VALIDATION
+    // =========================
+
+    function validate(data) {
+
+    const errors = [];
+
+    if (!data.code) {
+        errors.push('Code is required');
+    }
+
+    if (!data.name || data.name.length < 2) {
+        errors.push('Name must be at least 2 characters');
+    }
+
+    if (!data.category) {
+        errors.push('Category is required');
+    }
+
+    return errors;
+}
 
     // =========================
     // INIT

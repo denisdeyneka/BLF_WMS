@@ -47,12 +47,16 @@ body {
 }
 
 .product-table {
+  table-layout: fixed;
   width: 100%;
   border-collapse: collapse;
 }
 
 .product-table th,
 .product-table td {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   padding: 8px;
   border-bottom: 1px solid var(--border);
 }
@@ -61,6 +65,19 @@ body {
   position: sticky;
   top: 0;
   background: #f5f5f5;
+}
+
+.product-table td.col-description {
+  max-width: 250px;
+  font-size: 11px;
+  color: #555;
+}
+
+.product-table td:hover {
+  white-space: normal;
+  position: relative;
+  background: #fff;
+  z-index: 2;
 }
 
 .btn {
@@ -88,6 +105,36 @@ input {
   border-radius: 4px;
 }
 
+.form-errors {
+  color: #d32f2f;
+  font-size: 12px;
+  margin-bottom: 10px;
+}
+
+.input-error {
+  border: 1px solid #d32f2f !important;
+  background: #fff5f5;
+}
+
+textarea#description {
+  width: 100%;
+  min-height: 140px;
+  resize: vertical;
+  padding: 8px;
+  font-size: 13px;
+  font-family: Arial, sans-serif;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  outline: none;
+  margin: 6px 0;
+  line-height: 1.4;
+}
+
+textarea#description:focus {
+  border-color: #2d6cdf;
+  box-shadow: 0 0 0 2px rgba(45, 108, 223, 0.15);
+}
+
 .drawer {
   position: relative;
   width: 0;
@@ -102,39 +149,43 @@ input {
 }
 
 .product-library {
-  height: 100%;
   display: flex;
   flex-direction: column;
+  height: 100%;
 }
 
 .product-header {
   display: flex;
   justify-content: space-between;
   padding: 10px;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid #ccc;
 }
 
-.product-body {
-  display: flex;
-  flex: 1;
-  overflow: hidden;
+.product-table {
+  width: 100%;
+  border-collapse: collapse;
 }
 
-.product-table-wrap {
-  flex: 1;
-  overflow: auto;
+.product-table th,
+.product-table td {
+  padding: 8px;
+  border-bottom: 1px solid #eee;
 }
 
 .product-drawer {
+  position: fixed;
+  right: 0;
+  top: 0;
   width: 0;
+  height: 100%;
   overflow: hidden;
-  border-left: 1px solid var(--border);
-  transition: 0.25s;
   background: white;
+  border-left: 1px solid #ccc;
+  transition: 0.25s;
 }
 
 .product-drawer--open {
-  width: 320px;
+  width: 350px;
 }
 
 .product-drawer__inner {
@@ -142,9 +193,19 @@ input {
 }
 
 .product-drawer__actions {
-  margin-top: 10px;
   display: flex;
   gap: 10px;
+  margin-top: 10px;
+}
+
+.btn {
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+.btn--primary {
+  background: #2d6cdf;
+  color: white;
 }
 
 /*# sourceMappingURL=style.css.map */

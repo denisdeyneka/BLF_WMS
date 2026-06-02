@@ -5,3 +5,38 @@ input {
   border: 1px solid var(--border);
   border-radius: 4px;
 }
+
+.form-errors {
+  color: #d32f2f;
+  font-size: 12px;
+  margin-bottom: 10px;
+}
+
+.input-error {
+  border: 1px solid #d32f2f !important;
+  background: #fff5f5;
+}
+
+textarea#description {
+  width: 100%;
+  min-height: 140px;
+  resize: vertical; // пользователь может тянуть вверх/вниз
+  padding: 8px;
+
+  font-size: 13px;
+  font-family: Arial, sans-serif;
+
+  border: 1px solid #ccc;
+  border-radius: 6px;
+
+  outline: none;
+
+  margin: 6px 0;
+
+  line-height: 1.4;
+}
+
+textarea#description:focus {
+  border-color: #2d6cdf;
+  box-shadow: 0 0 0 2px rgba(45, 108, 223, 0.15);
+}
