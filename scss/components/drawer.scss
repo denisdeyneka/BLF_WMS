@@ -1,0 +1,12 @@
+.drawer {
+  position: relative;
+  width: 0;
+  transition: 0.25s;
+  border-left: 1px solid var(--border);
+  background: white;
+  overflow: hidden;
+}
+
+.drawer.open {
+  width: 320px;
+}

@@ -1,26 +1,40 @@
 import { renderProductLibrary } from './modules/ui/productLibrary.js';
+import { renderWarehouse } from './modules/ui/renderWarehouse.js';
 
 console.log('APP START');
 
-// очищаем body
-document.body.innerHTML = '';
+const content = document.getElementById('content');
 
-// контейнер приложения
-const appContainer = document.createElement('div');
+const btnProducts = document.getElementById('nav-products');
+const btnWarehouse = document.getElementById('nav-warehouse');
 
-appContainer.id = 'app';
+const api = window.api;
 
-document.body.appendChild(appContainer);
+let currentView = 'products';
 
-// рендерим библиотеку препаратов
-function render() {
+async function render() {
 
-    appContainer.innerHTML = '';
+    content.innerHTML = '';
 
-    appContainer.appendChild(
-        renderProductLibrary(window.api)
-    );
+    if (currentView === 'products') {
+        content.appendChild(renderProductLibrary(api));
+    }
+
+    if (currentView === 'warehouse') {
+        // ВРЕМЕННО: пока нет API warehouse
+        const warehouse = await api.getWarehouse?.() || { zones: [] };
+        content.appendChild(renderWarehouse(warehouse));
+    }
 }
 
-console.log(window.api);
+btnProducts.onclick = () => {
+    currentView = 'products';
+    render();
+};
+
+btnWarehouse.onclick = () => {
+    currentView = 'warehouse';
+    render();
+};
+
 render();

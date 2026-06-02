@@ -4,28 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BLF_WMS</title>
+    <link rel="stylesheet" href="./css/style.css" />
     <script type="module" src="app.js"></script>
 </head>
 <body>
-    <!-- Заголовок приложения -->
-  <h1>BLF_WMS Lite — OK</h1>
+  <!-- =========================
+        APP SHELL (СТАТИЧЕСКИЙ КАРКАС)
+        ========================= -->
+  <div id="app">
+      <!-- HEADER (меню вкладок) -->
+    <header class="shell-header">
+        <button id="nav-products">Products</button>
+        <button id="nav-warehouse">Warehouse</button>
+    </header>
 
-  <!-- Проверка запуска Electron -->
-  <p>Electron is running</p>
+    <!-- MAIN CONTENT (сюда рендерятся модули) -->
+    <main id="content" class="shell-content">
+        <!-- JS будет подставлять сюда Product Library / Warehouse -->
+    </main>
 
-  <!-- переключатель отображения склада -->
-  <div id="view-switcher" style="margin-top:10px;"></div>
-  <div id="app"></div>
-
-  <!-- Блок статуса -->
-  <div
-    id="status"
-    style="padding: 10px; background: #f3f3f3; margin-top: 10px;">
-
-    Status: initializing...
-
+    <!-- FOOTER -->
+    <footer class="shell-footer">
+        BLF WMS · v0.1
+    </footer>
   </div>
-
 </body>
 
 </html>

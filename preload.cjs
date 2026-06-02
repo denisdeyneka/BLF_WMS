@@ -1,55 +1,35 @@
 // bridge между renderer и electron backend
 
-// =====================================
-// ELECTRON PRELOAD (API BRIDGE)
-// =====================================
-
 const { contextBridge, ipcRenderer } = require('electron');
 
-console.log('PRELOAD LOADED');
-
-// =====================================
-// EXPOSE API TO RENDERER
-// =====================================
-
+// ==============================
+// CLEAN DATA LAYER API
+// ==============================
 contextBridge.exposeInMainWorld('api', {
 
-    // ---------------------
-    // TEST
-    // ---------------------
-    ping: () => 'pong',
+    // =========================
+    // SYSTEM
+    // =========================
+    ping: () => ipcRenderer.invoke('system:ping'),
 
-    // ---------------------
-    // READ
-    // ---------------------
-    getProducts: () =>
-        ipcRenderer.invoke('products:getAll'),
+    // =========================
+    // PRODUCTS
+    // =========================
+    getProducts: () => ipcRenderer.invoke('products:getAll'),
 
-    // ---------------------
-    // CREATE
-    // ---------------------
     createProduct: (data) =>
-        ipcRenderer.invoke(
-            'products:create',
-            data
-        ),
+        ipcRenderer.invoke('products:create', data),
 
-    // ---------------------
-    // UPDATE  ← ДОБАВИЛИ ЭТО
-    // ---------------------
     updateProduct: (id, data) =>
-        ipcRenderer.invoke(
-            'products:update',
-            id,
-            data
-        ),
+        ipcRenderer.invoke('products:update', { id, data }),
 
-    // ---------------------
-    // DELETE
-    // ---------------------
     deleteProduct: (id) =>
-        ipcRenderer.invoke(
-            'products:delete',
-            id
-        )
+        ipcRenderer.invoke('products:delete', id),
+
+    getProductById: (id) =>
+        ipcRenderer.invoke('products:getById', id),
+
+    searchProducts: (query) =>
+        ipcRenderer.invoke('products:search', query),
+
 });

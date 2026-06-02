@@ -1,0 +1,150 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg: #f5f6f8;
+  --panel: #ffffff;
+  --border: #ddd;
+  --text: #222;
+  --primary: #2f6fed;
+  --danger: #e53935;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+#app {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.shell-header {
+  display: flex;
+  gap: 10px;
+  padding: 10px;
+  border-bottom: 1px solid var(--border);
+  background: var(--panel);
+}
+
+.shell-footer {
+  padding: 8px 10px;
+  border-top: 1px solid var(--border);
+  font-size: 12px;
+  background: var(--panel);
+}
+
+.shell-content {
+  flex: 1;
+  overflow: hidden;
+  padding: 10px;
+}
+
+.product-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.product-table th,
+.product-table td {
+  padding: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.product-table__header {
+  position: sticky;
+  top: 0;
+  background: #f5f5f5;
+}
+
+.btn {
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  background: white;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.btn--primary {
+  border-color: var(--primary);
+}
+
+.btn--danger {
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+input {
+  width: 100%;
+  padding: 6px;
+  margin: 5px 0;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+}
+
+.drawer {
+  position: relative;
+  width: 0;
+  transition: 0.25s;
+  border-left: 1px solid var(--border);
+  background: white;
+  overflow: hidden;
+}
+
+.drawer.open {
+  width: 320px;
+}
+
+.product-library {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.product-header {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.product-body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.product-table-wrap {
+  flex: 1;
+  overflow: auto;
+}
+
+.product-drawer {
+  width: 0;
+  overflow: hidden;
+  border-left: 1px solid var(--border);
+  transition: 0.25s;
+  background: white;
+}
+
+.product-drawer--open {
+  width: 320px;
+}
+
+.product-drawer__inner {
+  padding: 15px;
+}
+
+.product-drawer__actions {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+}
+
+/*# sourceMappingURL=style.css.map */

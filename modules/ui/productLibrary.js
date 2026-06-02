@@ -1,194 +1,216 @@
 // ==============================
-// PRODUCT LIBRARY UI (STABLE VERSION)
+// PRODUCT LIBRARY UI (CLEAN SCSS VERSION)
 // ==============================
 
 export function renderProductLibrary(api) {
 
     const container = document.createElement('div');
-    container.style.padding = '20px';
-    container.style.fontFamily = 'Arial';
+    container.className = 'product-library';
 
     // =========================
-    // TITLE
+    // HEADER
     // =========================
+    const header = document.createElement('div');
+    header.className = 'product-header';
+
     const title = document.createElement('h2');
     title.textContent = 'Product Library';
-    container.appendChild(title);
+
+    const addBtn = document.createElement('button');
+    addBtn.className = 'btn btn--primary';
+    addBtn.textContent = '+ Add Product';
+
+    header.appendChild(title);
+    header.appendChild(addBtn);
+
+    container.appendChild(header);
 
     // =========================
-    // FORM STATE (future-ready)
+    // BODY WRAP
     // =========================
-    let editMode = false;
-    let editId = null;
+    const body = document.createElement('div');
+    body.className = 'product-body';
 
     // =========================
-    // FORM
+    // TABLE
     // =========================
-    const form = document.createElement('div');
-    form.style.marginBottom = '20px';
+    const tableWrap = document.createElement('div');
+    tableWrap.className = 'product-table-wrap';
 
-    form.innerHTML = `
-        <input id="name" placeholder="Product name" />
-        <input id="desc" placeholder="Description" />
-        <button id="addBtn">Add</button>
-        <button id="cancelBtn" style="display:none;">Cancel</button>
+    const table = document.createElement('table');
+    table.className = 'product-table';
+
+    tableWrap.appendChild(table);
+
+    // =========================
+    // DRAWER
+    // =========================
+    const drawer = document.createElement('div');
+    drawer.className = 'product-drawer';
+
+    drawer.innerHTML = `
+        <div class="product-drawer__inner">
+
+            <h3 id="dTitle">Product</h3>
+
+            <input id="name" placeholder="Name" />
+            <input id="desc" placeholder="Description" />
+            <input id="form" placeholder="Form" />
+            <input id="dosage" placeholder="Dosage" />
+            <input id="pack" placeholder="Packaging" />
+            <input id="storage" placeholder="Storage" />
+            <input id="shelf" placeholder="Shelf life" />
+
+            <div class="product-drawer__actions">
+                <button id="save" class="btn btn--primary">Save</button>
+                <button id="cancel" class="btn">Cancel</button>
+            </div>
+
+        </div>
     `;
 
-    container.appendChild(form);
-
-    const nameInput = form.querySelector('#name');
-    const descInput = form.querySelector('#desc');
-    const addBtn = form.querySelector('#addBtn');
-    const cancelBtn = form.querySelector('#cancelBtn');
+    body.appendChild(tableWrap);
+    body.appendChild(drawer);
+    container.appendChild(body);
 
     // =========================
-    // LIST
+    // STATE
     // =========================
-    const list = document.createElement('div');
-    container.appendChild(list);
+    let editId = null;
+
+    const $ = (sel) => drawer.querySelector(sel);
+
+    const dTitle = $('#dTitle');
+
+    const fields = {
+        name: $('#name'),
+        desc: $('#desc'),
+        form: $('#form'),
+        dosage: $('#dosage'),
+        pack: $('#pack'),
+        storage: $('#storage'),
+        shelf: $('#shelf')
+    };
 
     // =========================
-    // LOAD PRODUCTS
+    // DRAWER CONTROL
+    // =========================
+    function openDrawer(product = null) {
+
+        drawer.classList.add('product-drawer--open');
+
+        if (product) {
+            dTitle.textContent = 'Edit Product';
+            editId = product.id;
+
+            fields.name.value = product.product_name || '';
+            fields.desc.value = product.description || '';
+            fields.form.value = product.form || '';
+            fields.dosage.value = product.dosage || '';
+            fields.pack.value = product.packaging || '';
+            fields.storage.value = product.storage_conditions || '';
+            fields.shelf.value = product.shelf_life || '';
+        } else {
+            dTitle.textContent = 'New Product';
+            editId = null;
+
+            Object.values(fields).forEach(f => f.value = '');
+        }
+    }
+
+    function closeDrawer() {
+        drawer.classList.remove('product-drawer--open');
+    }
+
+    // =========================
+    // SAVE
+    // =========================
+    async function save() {
+
+        const data = {
+            product_name: fields.name.value.trim(),
+            description: fields.desc.value.trim(),
+            form: fields.form.value.trim(),
+            dosage: fields.dosage.value.trim(),
+            packaging: fields.pack.value.trim(),
+            storage_conditions: fields.storage.value.trim(),
+            shelf_life: fields.shelf.value.trim()
+        };
+
+        if (!data.product_name) return;
+
+        if (editId) {
+            await api.updateProduct(editId, data);
+        } else {
+            await api.createProduct(data);
+        }
+
+        closeDrawer();
+        await load();
+    }
+
+    // =========================
+    // TABLE LOAD
     // =========================
     async function load() {
 
         const products = await api.getProducts();
 
-        list.innerHTML = '';
-
-        if (!products || products.length === 0) {
-            list.innerHTML = '<p>No products</p>';
-            return;
-        }
+        table.innerHTML = `
+            <tr class="product-table__header">
+                <th>Name</th>
+                <th>Form</th>
+                <th>Dosage</th>
+                <th>Packaging</th>
+                <th>Actions</th>
+            </tr>
+        `;
 
         products.forEach(p => {
 
-            const row = document.createElement('div');
+            const row = document.createElement('tr');
 
-            row.style.border = '1px solid #ccc';
-            row.style.padding = '10px';
-            row.style.marginBottom = '8px';
-            row.style.borderRadius = '6px';
-
-            // content
-            const content = document.createElement('div');
-
-            content.innerHTML = `
-                <b>${p.product_name}</b><br/>
-                <small>${p.description || ''}</small>
+            row.innerHTML = `
+                <td>${p.product_name}</td>
+                <td>${p.form || ''}</td>
+                <td>${p.dosage || ''}</td>
+                <td>${p.packaging || ''}</td>
+                <td></td>
             `;
 
-            row.appendChild(content);
+            const actions = row.querySelector('td:last-child');
 
-            // =========================
-            // ACTIONS
-            // =========================
-            const actions = document.createElement('div');
-            actions.style.marginTop = '8px';
+            const edit = document.createElement('button');
+            edit.className = 'btn';
+            edit.textContent = 'Edit';
+            edit.onclick = () => openDrawer(p);
 
-            // DELETE
-            const delBtn = document.createElement('button');
-            delBtn.textContent = 'Delete';
+            const del = document.createElement('button');
+            del.className = 'btn btn--danger';
+            del.textContent = 'Delete';
 
-            delBtn.onclick = async () => {
+            del.onclick = async () => {
                 await api.deleteProduct(p.id);
                 await load();
             };
 
-            // EDIT (prepare)
-            const editBtn = document.createElement('button');
-            editBtn.textContent = 'Edit';
-            editBtn.style.marginLeft = '8px';
+            actions.appendChild(edit);
+            actions.appendChild(del);
 
-            editBtn.onclick = () => {
-
-                editMode = true;
-                editId = p.id;
-
-                nameInput.value = p.product_name;
-                descInput.value = p.description || '';
-
-                addBtn.textContent = 'Update';
-                cancelBtn.style.display = 'inline-block';
-            };
-
-            actions.appendChild(delBtn);
-            actions.appendChild(editBtn);
-
-            row.appendChild(actions);
-
-            list.appendChild(row);
+            table.appendChild(row);
         });
     }
 
     // =========================
-    // ADD / UPDATE PRODUCT
+    // EVENTS
     // =========================
-    addBtn.onclick = async () => {
-
-        const product_name = nameInput.value.trim();
-        const description = descInput.value.trim();
-
-        if (!product_name) return;
-
-        // =========================
-        // CREATE
-        // =========================
-        if (!editMode) {
-
-            await api.createProduct({
-                product_name,
-                description,
-                form: '',
-                dosage: '',
-                packaging: '',
-                shelf_life: ''
-            });
-
-        } else {
-
-            // =========================
-            // UPDATE
-            // =========================
-            await api.updateProduct(editId, {
-                product_name,
-                description,
-                form: '',
-                dosage: '',
-                packaging: '',
-                shelf_life: ''
-            });
-
-            editMode = false;
-            editId = null;
-        }
-
-        // reset form
-        nameInput.value = '';
-        descInput.value = '';
-
-        addBtn.textContent = 'Add';
-        cancelBtn.style.display = 'none';
-
-        setTimeout(load, 50);
-    };
+    addBtn.onclick = () => openDrawer();
+    drawer.querySelector('#save').onclick = save;
+    drawer.querySelector('#cancel').onclick = closeDrawer;
 
     // =========================
-    // CANCEL EDIT
+    // INIT
     // =========================
-    cancelBtn.onclick = () => {
-
-        editMode = false;
-        editId = null;
-
-        nameInput.value = '';
-        descInput.value = '';
-
-        addBtn.textContent = 'Add';
-        cancelBtn.style.display = 'none';
-    };
-
-    // initial load
     load();
 
     return container;

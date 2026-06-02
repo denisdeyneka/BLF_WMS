@@ -2,9 +2,9 @@
   "name": "blf_wms",
   "version": "1.0.0",
   "main": "main.cjs",
- 
   "scripts": {
     "start": "electron .",
+    "sass": "sass scss/main.scss css/style.css --watch",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -14,5 +14,8 @@
   "dependencies": {
     "electron": "^42.3.0",
     "sql.js": "^1.14.1"
+  },
+  "devDependencies": {
+    "sass": "^1.100.0"
   }
 }

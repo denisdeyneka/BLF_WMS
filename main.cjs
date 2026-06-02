@@ -1,126 +1,117 @@
-// ======================================
+// =====================================
 // ELECTRON MAIN PROCESS
-// ======================================
+// =====================================
 
-// Electron
 const { app, BrowserWindow, ipcMain } = require('electron');
-
 const path = require('path');
 
-// инициализация БД
+// ==============================
+// DB + SERVICES
+// ==============================
 const { initDB } = require('./modules/db/database.cjs');
+const productService = require('./modules/services/productLibraryService.cjs');
 
-// сервис библиотеки препаратов
-const productService =
-require('./modules/services/productLibraryService.cjs');
+// ==============================
+// DB STATE FLAG
+// ==============================
+let dbReady = false;
 
-
-// ======================================
-// DATABASE INIT
-// ======================================
-
-initDB();
-
-
-// ======================================
-// IPC HANDLERS
-// связь renderer -> backend
-// ======================================
-
-// получить все продукты
-ipcMain.handle(
-    'products:getAll',
-
-    () => {
-
-        return productService.getAllProducts();
+// ==============================
+// DB GUARD (защита от ранних вызовов)
+// ==============================
+function ensureDB() {
+    if (!dbReady) {
+        throw new Error('Database not initialized yet');
     }
-);
+}
 
+// ==============================
+// IPC SYSTEM
+// ==============================
+ipcMain.handle('system:ping', () => {
+    return 'pong';
+});
 
-// создать продукт
-ipcMain.handle(
-    'products:create',
+// ==============================
+// IPC PRODUCTS
+// ==============================
+ipcMain.handle('products:getAll', () => {
+    ensureDB();
+    return productService.getAllProducts();
+});
 
-    (event, data) => {
+ipcMain.handle('products:create', (event, data) => {
+    ensureDB();
+    return productService.createProduct(data);
+});
 
-        return productService.createProduct(data);
-    }
-);
+ipcMain.handle('products:update', (event, payload) => {
+    ensureDB();
+    return productService.updateProduct(payload.id, payload.data);
+});
 
+ipcMain.handle('products:delete', (event, id) => {
+    ensureDB();
+    return productService.deleteProduct(id);
+});
 
-// удалить продукт
-ipcMain.handle(
-    'products:delete',
+ipcMain.handle('products:getById', (event, id) => {
+    ensureDB();
+    return productService.getProductById(id);
+});
 
-    (event, id) => {
+ipcMain.handle('products:search', (event, query) => {
+    ensureDB();
+    return productService.searchProducts(query);
+});
 
-        return productService.deleteProduct(id);
-    }
-);
-
-//edit product
-ipcMain.handle(
-    'products:update',
-    (event, id, data) => {
-
-        return productService.updateProduct(id, data);
-    }
-);
-
-
-// ======================================
+// ==============================
 // CREATE WINDOW
-// ======================================
-
+// ==============================
 function createWindow() {
-
     const win = new BrowserWindow({
-
         width: 1200,
-
         height: 800,
 
         webPreferences: {
-
-            // bridge renderer <-> backend
-            preload: path.join(
-                __dirname,
-                'preload.cjs'
-            ),
-
-            // renderer НЕ получает require()
             nodeIntegration: false,
-
-            // включаем безопасный bridge
-            contextIsolation: true
+            contextIsolation: true,
+            preload: path.join(__dirname, 'preload.cjs')
         }
     });
 
-
-    // стартовая страница
     win.loadFile('index.html');
+
+    // win.webContents.openDevTools(); // включи при отладке
 }
 
+// ==============================
+// APP LIFECYCLE
+// ==============================
+app.whenReady().then(async () => {
 
-// ======================================
-// APP READY
-// ======================================
+    // 1. Инициализация базы (ОБЯЗАТЕЛЬНО WAIT)
+    await initDB();
 
-app.whenReady().then(() => {
+    // 2. отмечаем что БД готова
+    dbReady = true;
 
+    // 3. создаём окно
     createWindow();
+
+    // macOS support
+    app.on('activate', () => {
+        if (BrowserWindow.getAllWindows().length === 0) {
+            createWindow();
+        }
+    });
 });
 
-
-// ======================================
-// APP CLOSE
-// ======================================
-
+// ==============================
+// CLOSE HANDLING
+// ==============================
 app.on('window-all-closed', () => {
-
     if (process.platform !== 'darwin') {
-
         app.quit();
     }
 });
