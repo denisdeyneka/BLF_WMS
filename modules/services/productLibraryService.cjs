@@ -20,7 +20,7 @@ function getAllProducts() {
             group_packaging,
             units_per_box,
             shelf_life,
-            storage_conditions,
+            storage_zone,
             registration_certificate,
             country,
             is_active
@@ -45,7 +45,7 @@ function createProduct(data) {
             group_packaging,
             units_per_box,
             shelf_life,
-            storage_conditions,
+            storage_zone,
             registration_certificate,
             country,
             is_active
@@ -60,7 +60,7 @@ function createProduct(data) {
             '${escape(data.group_packaging)}',
             '${escape(data.units_per_box)}',
             '${escape(data.shelf_life)}',
-            '${escape(data.storage_conditions)}',
+            '${escape(data.storage_zone)}',
             '${escape(data.registration_certificate)}',
             '${escape(data.country)}',
             1
@@ -85,7 +85,7 @@ function updateProduct(id, data) {
             group_packaging = '${escape(data.group_packaging)}',
             units_per_box = '${escape(data.units_per_box)}',
             shelf_life = '${escape(data.shelf_life)}',
-            storage_conditions = '${escape(data.storage_conditions)}',
+            storage_zone = '${escape(data.storage_zone)}',
             registration_certificate = '${escape(data.registration_certificate)}',
             country = '${escape(data.country)}'
         WHERE id = ${id}

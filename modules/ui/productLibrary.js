@@ -6,11 +6,19 @@
 export function renderProductLibrary(api) {
 
     const categoryMap = {
-        lz: 'Лікарські засоби',
-        md: 'мед. вироби',
-        vet: 'Ветеринарні препарати',
-        diet: 'Дієтичні добавки/вода',
-        cosmetic: 'Косметичні засоби'
+        lz: 'Лікарській засіб',
+        md: 'Медичний виріб',
+        vet: 'Ветеринарний препарат',
+        diet: 'Дієтична добавка / вода',
+        cosmetic: 'Косметичний засіб',
+        other: ' Інше '
+    };
+
+    const storageZoneMap = {
+        A: '+2...+8°C',
+        B: '15...25°C RH<65%',
+        C: '-20...-10°C',
+        NA: 'Н/З'
     };
 
   
@@ -54,29 +62,33 @@ export function renderProductLibrary(api) {
 
             <h3 id="dTitle">Product</h3>
 
-            <input id="code" placeholder="Code" />
-            <input id="name" placeholder="Name" />
-            <textarea id="description" placeholder="Full description (regulatory text)"></textarea>
+            <input id="code" placeholder="Код виробу" />
+            <input id="name" placeholder="Назва" />
+            <textarea id="description" placeholder="Опис"></textarea>
             <div id="errors" class="form-errors"></div>
 
             <select id="category">
-                <option value="">Category</option>
-                <option value="lz">ЛЗ</option>
-                <option value="md">Мед. вироби</option>
-                <option value="vet">Ветеринарні</option>
-                <option value="diet">Дієтичні</option>
-                <option value="cosmetic">Косметика</option>
+                <option value="">Оберіть категорію виробу</option>
+                <option value="lz">Лікарський засіб</option>
+                <option value="md">Медичний виріб</option>
+                <option value="vet">Ветеринарний виріб</option>
+                <option value="diet">Дієтичні добавки, вода питна</option>
+                <option value="cosmetic">Косметичний засіб</option>
+                <option value="other">Інше</option>
             </select>
 
-            <input id="primary_packaging" placeholder="Primary packaging" />
-            <input id="fill_volume" placeholder="Fill volume" />
-
-            <input id="group_packaging" placeholder="Group packaging (box)" />
-            <input id="units_per_box" placeholder="Units per box" />
-
-            <input id="shelf_life" placeholder="Shelf life" />
-            <input id="storage_conditions" placeholder="Storage conditions" />
-
+            <input id="primary_packaging" placeholder="Первинне пакування" />
+            <input id="fill_volume" placeholder="Доза наповнення" />
+            <input id="group_packaging" placeholder="Групове пакування (коробка)" />
+            <input id="units_per_box" placeholder="Упаковок у коробці" />
+            <input id="shelf_life" type="number" min="1" max="120" placeholder="Термін придатності (у місяцях)" />
+            <select id="storage_zone">
+                <option value="">Зона зберігання</option>
+                <option value="A">+2...+8°C</option>
+                <option value="C">-20...-10°C</option>
+                <option value="B">15...25°C RH&lt;65%</option>
+                <option value="NA">Н/З</option>
+            </select>
             <input id="registration_certificate" placeholder="Registration cert" />
             <input id="country" placeholder="Country" />
 
@@ -107,7 +119,7 @@ export function renderProductLibrary(api) {
         group_packaging: $('#group_packaging'),
         units_per_box: $('#units_per_box'),
         shelf_life: $('#shelf_life'),
-        storage_conditions: $('#storage_conditions'),
+        storage_zone: $('#storage_zone'),
         registration_certificate: $('#registration_certificate'),
         country: $('#country')
     };
@@ -136,7 +148,7 @@ export function renderProductLibrary(api) {
             fields.units_per_box.value = product.units_per_box || '';
 
             fields.shelf_life.value = product.shelf_life || '';
-            fields.storage_conditions.value = product.storage_conditions || '';
+            fields.storage_zone.value = product.storage_zone || '';
 
             fields.registration_certificate.value = product.registration_certificate || '';
             fields.country.value = product.country || '';
@@ -171,7 +183,7 @@ async function save() {
         units_per_box: fields.units_per_box.value.trim(),
 
         shelf_life: fields.shelf_life.value.trim(),
-        storage_conditions: fields.storage_conditions.value.trim(),
+        storage_zone: fields.storage_zone.value.trim(),
 
         registration_certificate: fields.registration_certificate.value.trim(),
         country: fields.country.value.trim()

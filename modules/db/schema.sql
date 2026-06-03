@@ -13,7 +13,7 @@ CREATE TABLE product_library (
     units_per_box TEXT,
 
     shelf_life TEXT,
-    storage_conditions TEXT,
+    storage_zone TEXT,
     registration_certificate TEXT,
     country TEXT,
 
