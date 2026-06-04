@@ -55,7 +55,7 @@ export function renderProductLibrary(api) {
 
     drawer.innerHTML = `
         <div class="product-drawer__inner">
-            <h3>Продукт</h3>
+            <h3 id="dTitle">Продукт</h3>
             <!-- 1 -->
             <div class="field">
                 <label for="name">Назва</label>
@@ -231,24 +231,43 @@ export function renderProductLibrary(api) {
         const inner = drawer.querySelector('.product-drawer__inner');
         inner.scrollTop = 0;
 
-        if (product) {
-            dTitle.textContent = 'Edit Product';
-            editId = product.id;
-
-            Object.keys(fields).forEach(k => {
-                fields[k].value = product[k] || '';
-            });
-
-        } else {
-            dTitle.textContent = 'New Product';
+        // =========================
+        // CREATE MODE
+        // =========================
+        if (!product) {
+            dTitle.textContent = 'Створити продукт';
             editId = null;
 
             Object.values(fields).forEach(f => f.value = '');
-            
-            //  DEFAULT COUNTRY
+
             fields.country.value = 'Україна';
 
+            return;
         }
+
+        // =========================
+        // EDIT MODE (FIXED SAFE FILL)
+        // =========================
+        dTitle.textContent = 'Змінити продукт';
+        editId = product.id;
+
+        // 🔥 защита от "пустого/урезанного" объекта
+        const p = product || {};
+
+        fields.code.value = p.code || '';
+        fields.name.value = p.name || '';
+        fields.description.value = p.description || '';
+        fields.category.value = p.category || '';
+
+        fields.primary_packaging.value = p.primary_packaging || '';
+        fields.fill_volume.value = p.fill_volume || '';
+        fields.fill_dose.value = p.fill_dose || '';
+
+        fields.units_per_pack.value = p.units_per_pack || '';
+        fields.packs_per_box.value = p.packs_per_box || '';
+
+        fields.storage_zone.value = p.storage_zone || '';
+        fields.country.value = p.country || 'Україна';
     }
 
     function close() {
@@ -313,8 +332,10 @@ export function renderProductLibrary(api) {
 
             const tdCode = document.createElement('td');
             tdCode.textContent = p.code || '';
+            tdCode.className = 'col-code';
 
             const tdName = document.createElement('td');
+            tdName.className = 'col-name';
 
             const name = document.createElement('div');
             name.textContent = p.name || '';
@@ -329,19 +350,24 @@ export function renderProductLibrary(api) {
             tdName.appendChild(desc);
 
             const tdChar = document.createElement('td');
+            tdChar.className = 'col-char';
             tdChar.textContent = buildCharacteristics(p);
 
             const tdPack = document.createElement('td');
+            tdPack.className = 'col-pack';
             tdPack.textContent = buildPackaging(p);
 
             const tdCountry = document.createElement('td');
+            tdCountry.className = 'col-country';
             tdCountry.textContent = p.country || '';
 
             const tdZone = document.createElement('td');
+            tdZone.className = 'col-zone';
             tdZone.textContent =
                 storageZoneMap[p.storage_zone] || p.storage_zone || '';
 
             const tdActions = document.createElement('td');
+            tdActions.className = 'col-actions';
             tdActions.className = 'col-actions';
 
             const wrapper = document.createElement('div');
@@ -350,7 +376,10 @@ export function renderProductLibrary(api) {
             const edit = document.createElement('button');
             edit.textContent = 'Змінити';
             edit.className = 'btn btn--small btn--edit';
-            edit.onclick = () => open(p);
+            edit.onclick = () => {
+            console.log('PRODUCT FROM TABLE:', p);
+            open(p);
+        };
 
             const del = document.createElement('button');
             del.textContent = 'Видалити';
