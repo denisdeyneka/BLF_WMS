@@ -1,12 +1,130 @@
-.drawer {
-  position: relative;
+.product-drawer {
+  position: fixed;
+  right: 0;
+  top: 0;
+
   width: 0;
-  transition: 0.25s;
-  border-left: 1px solid var(--border);
-  background: white;
+  height: 100vh;
+
+  background: #fff;
+  border-left: 1px solid #ccc;
+
   overflow: hidden;
+  transition: width 0.25s ease;
 }
 
-.drawer.open {
-  width: 320px;
+.product-drawer--open {
+  width: 350px;
 }
+
+/* =========================
+   INNER
+========================= */
+
+.product-drawer__inner {
+  display: flex;
+  flex-direction: column;
+
+  height: 100%;
+  padding: 15px;
+
+  overflow-y: auto;
+
+  gap: 10px;
+}
+
+/* =========================
+   CONTROLS (STABLE BASE)
+========================= */
+
+.product-drawer__inner input,
+.product-drawer__inner textarea,
+.product-drawer__inner select {
+  width: 100%;
+  box-sizing: border-box;
+
+  font-size: 14px;
+
+  border: 1px solid #ddd;
+  border-radius: 4px;
+
+  background: #fff;
+}
+
+/* inputs */
+.product-drawer__inner input {
+  height: 34px;
+  padding: 0 8px;
+}
+
+/* textarea */
+.product-drawer__inner textarea {
+  min-height: 80px;
+  padding: 6px 8px;
+  resize: vertical;
+}
+
+/* select (ОТДЕЛЬНО, СТАБИЛЬНО) */
+.product-drawer__inner select {
+  height: 34px;
+  padding: 0 8px;
+  display: block;
+}
+
+/* =========================
+   LAYOUT GRID (NO SELECT MIXING)
+========================= */
+
+.form-row {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+/* wrapper for columns */
+.col {
+  flex: 1;
+  min-width: 0;
+}
+
+/* 2 columns */
+.form-row--2 .col {
+  flex: 0 0 calc(50% - 4px);
+}
+
+/* 3 columns */
+.form-row--3 .col {
+  flex: 0 0 calc(33.333% - 6px);
+}
+
+/* =========================
+   LABELS
+========================= */
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.field label {
+  font-size: 12px;
+  color: #666;
+}
+
+/* =========================
+   ACTIONS
+========================= */
+
+.product-drawer__actions {
+  margin-top: auto;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  gap: 12px;
+
+  padding-top: 10px;
+}
+

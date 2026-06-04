@@ -1,74 +1,63 @@
 .product-table {
-  table-layout: fixed;
   width: 100%;
   border-collapse: collapse;
-
-  .col-code {
-
-    width: 90px;
-    min-width: 90px;
-    max-width: 90px;
-
-    text-align: center;
-
-    font-family: monospace;
-    font-weight: 600;
-  }
-
-  .col-category {
-    width: 200px;
-    min-width: 200px;
-    max-width: 200px;
-
-    font-size: 12px;
-     text-align: center;
-
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .col-actions {
-    width: 120px;
-    min-width: 120px;
-    max-width: 120px;
-    text-align: center;
-    white-space: nowrap;
-  }
-
-  .actions-wrapper {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 6px;
-  }
-
+  table-layout: fixed;
 }
 
+/* общие ячейки */
 .product-table th,
 .product-table td {
+  padding: 8px;
+  border-bottom: 1px solid #eee;
   overflow: hidden;
   text-overflow: ellipsis;
+  vertical-align: top;
+}
+
+/* CODE */
+.col-code {
+  width: 150px;
   white-space: nowrap;
-  padding: 8px;
-  border-bottom: 1px solid var(--border);
 }
 
-.product-table__header {
-  position: sticky;
-  top: 0;
-  background: #f5f5f5;
+/* CATEGORY */
+.col-category {
+  width: 160px;
 }
 
-.product-table td.col-description {
-  max-width: 250px;
-  font-size: 11px;
-  color: #555;
+/* PRIMARY PACKAGING */
+.col-packaging {
+  width: 180px;
 }
 
-.product-table td:hover {
-  white-space: normal;
-  position: relative;
-  background: #fff;
-  z-index: 2;
+/* VOLUME */
+.col-volume {
+  width: 100px;
+  text-align: center;
+}
+
+/* UNITS */
+.col-units {
+  width: 100px;
+  text-align: center;
+}
+
+/* ZONE */
+.col-zone {
+  width: 160px;
+  text-align: center;
+}
+
+/* ACTIONS */
+.col-actions {
+  width: 120px;
+  text-align: center;
+}
+
+/* wrapper для кнопок */
+.actions-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
 }

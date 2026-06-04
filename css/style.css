@@ -1,3 +1,4 @@
+@charset "UTF-8";
 * {
   margin: 0;
   padding: 0;
@@ -11,6 +12,7 @@
   --text: #222;
   --primary: #2f6fed;
   --danger: #e53935;
+  --btn-regular-bg: #3fb3e0;
 }
 
 body {
@@ -47,85 +49,127 @@ body {
 }
 
 .product-table {
-  table-layout: fixed;
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed;
 }
-.product-table .col-code {
-  width: 90px;
-  min-width: 90px;
-  max-width: 90px;
-  text-align: center;
-  font-family: monospace;
-  font-weight: 600;
-}
-.product-table .col-category {
-  width: 200px;
-  min-width: 200px;
-  max-width: 200px;
-  font-size: 12px;
-  text-align: center;
+
+/* общие ячейки */
+.product-table th,
+.product-table td {
+  padding: 8px;
+  border-bottom: 1px solid #eee;
   overflow: hidden;
   text-overflow: ellipsis;
+  vertical-align: top;
+}
+
+/* CODE */
+.col-code {
+  width: 150px;
   white-space: nowrap;
 }
-.product-table .col-actions {
-  width: 120px;
-  min-width: 120px;
-  max-width: 120px;
+
+/* CATEGORY */
+.col-category {
+  width: 160px;
+}
+
+/* PRIMARY PACKAGING */
+.col-packaging {
+  width: 180px;
+}
+
+/* VOLUME */
+.col-volume {
+  width: 100px;
   text-align: center;
-  white-space: nowrap;
 }
-.product-table .actions-wrapper {
+
+/* UNITS */
+.col-units {
+  width: 100px;
+  text-align: center;
+}
+
+/* ZONE */
+.col-zone {
+  width: 160px;
+  text-align: center;
+}
+
+/* ACTIONS */
+.col-actions {
+  width: 120px;
+  text-align: center;
+}
+
+/* wrapper для кнопок */
+.actions-wrapper {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 6px;
-}
-
-.product-table th,
-.product-table td {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  padding: 8px;
-  border-bottom: 1px solid var(--border);
-}
-
-.product-table__header {
-  position: sticky;
-  top: 0;
-  background: #f5f5f5;
-}
-
-.product-table td.col-description {
-  max-width: 250px;
-  font-size: 11px;
-  color: #555;
-}
-
-.product-table td:hover {
-  white-space: normal;
-  position: relative;
-  background: #fff;
-  z-index: 2;
+  gap: 10px;
 }
 
 .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   padding: 6px 10px;
-  border: 1px solid var(--border);
-  background: white;
-  cursor: pointer;
+  font-size: 13px;
   border-radius: 4px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  user-select: none;
+  transition: 0.15s ease;
 }
 
+/* PRIMARY */
 .btn--primary {
-  border-color: var(--primary);
+  background: #2d6cdf;
+  color: #fff;
+  border-color: #2d6cdf;
 }
 
+.btn--primary:hover {
+  background: #2459b8;
+  border-color: #2459b8;
+}
+
+/* EDIT */
+.btn--edit {
+  background: #2d6cdf;
+  color: #fff;
+  border-color: #2d6cdf;
+}
+
+.btn--edit:hover {
+  background: #2459b8;
+}
+
+/* DANGER */
 .btn--danger {
-  border-color: var(--danger);
-  color: var(--danger);
+  background: #e53935;
+  color: #fff;
+  border-color: #e53935;
+}
+
+.btn--danger:hover {
+  background: #c62828;
+}
+
+/* SMALL */
+.btn--small {
+  padding: 4px 8px;
+  font-size: 12px;
+}
+
+/* DEFAULT (secondary) */
+.btn:not(.btn--primary):not(.btn--edit):not(.btn--danger) {
+  background: #f5f5f5;
+  border-color: #ddd;
+  color: #222;
 }
 
 input {
@@ -134,6 +178,10 @@ input {
   margin: 5px 0;
   border: 1px solid var(--border);
   border-radius: 4px;
+}
+
+select {
+  margin: 5px 0;
 }
 
 .form-errors {
@@ -166,17 +214,128 @@ textarea#description:focus {
   box-shadow: 0 0 0 2px rgba(45, 108, 223, 0.15);
 }
 
-.drawer {
-  position: relative;
+.product-drawer {
+  position: fixed;
+  right: 0;
+  top: 0;
   width: 0;
-  transition: 0.25s;
-  border-left: 1px solid var(--border);
-  background: white;
+  height: 100vh;
+  background: #fff;
+  border-left: 1px solid #ccc;
   overflow: hidden;
+  transition: width 0.25s ease;
 }
 
-.drawer.open {
-  width: 320px;
+.product-drawer--open {
+  width: 350px;
+}
+
+/* =========================
+   INNER
+========================= */
+.product-drawer__inner {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 15px;
+  overflow-y: auto;
+  gap: 10px;
+}
+
+/* =========================
+   CONTROLS (STABLE BASE)
+========================= */
+.product-drawer__inner input,
+.product-drawer__inner textarea,
+.product-drawer__inner select {
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 14px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: #fff;
+}
+
+/* inputs */
+.product-drawer__inner input {
+  height: 34px;
+  padding: 0 8px;
+}
+
+/* textarea */
+.product-drawer__inner textarea {
+  min-height: 80px;
+  padding: 6px 8px;
+  resize: vertical;
+}
+
+/* select (ОТДЕЛЬНО, СТАБИЛЬНО) */
+.product-drawer__inner select {
+  height: 34px;
+  padding: 0 8px;
+  display: block;
+}
+
+/* =========================
+   LAYOUT GRID (NO SELECT MIXING)
+========================= */
+.form-row {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+/* wrapper for columns */
+.col {
+  flex: 1;
+  min-width: 0;
+}
+
+/* 2 columns */
+.form-row--2 .col {
+  flex: 0 0 calc(50% - 4px);
+}
+
+/* 3 columns */
+.form-row--3 .col {
+  flex: 0 0 calc(33.333% - 6px);
+}
+
+/* =========================
+   LABELS
+========================= */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.field label {
+  font-size: 12px;
+  color: #666;
+}
+
+/* =========================
+   ACTIONS
+========================= */
+.product-drawer__actions {
+  margin-top: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  padding-top: 10px;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 8px;
+  background-color: var(--bg);
 }
 
 .product-library {
@@ -190,53 +349,6 @@ textarea#description:focus {
   justify-content: space-between;
   padding: 10px;
   border-bottom: 1px solid #ccc;
-}
-
-.product-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.product-table th,
-.product-table td {
-  padding: 8px;
-  border-bottom: 1px solid #eee;
-}
-
-.product-drawer {
-  position: fixed;
-  right: 0;
-  top: 0;
-  width: 0;
-  height: 100%;
-  overflow: hidden;
-  background: white;
-  border-left: 1px solid #ccc;
-  transition: 0.25s;
-}
-
-.product-drawer--open {
-  width: 350px;
-}
-
-.product-drawer__inner {
-  padding: 15px;
-}
-
-.product-drawer__actions {
-  display: flex;
-  gap: 10px;
-  margin-top: 10px;
-}
-
-.btn {
-  padding: 6px 10px;
-  cursor: pointer;
-}
-
-.btn--primary {
-  background: #2d6cdf;
-  color: white;
 }
 
 /*# sourceMappingURL=style.css.map */

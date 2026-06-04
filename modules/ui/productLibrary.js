@@ -1,17 +1,16 @@
 // ==============================
-// PRODUCT LIBRARY UI (ERP v2)
+// PRODUCT LIBRARY UI (FINAL CLEAN VERSION)
 // ==============================
-
 
 export function renderProductLibrary(api) {
 
     const categoryMap = {
-        lz: 'Лікарській засіб',
+        lz: 'Лікарський засіб',
         md: 'Медичний виріб',
         vet: 'Ветеринарний препарат',
         diet: 'Дієтична добавка / вода',
         cosmetic: 'Косметичний засіб',
-        other: ' Інше '
+        other: 'Інше'
     };
 
     const storageZoneMap = {
@@ -21,7 +20,6 @@ export function renderProductLibrary(api) {
         NA: 'Н/З'
     };
 
-  
     const container = document.createElement('div');
     container.className = 'product-library';
 
@@ -40,7 +38,6 @@ export function renderProductLibrary(api) {
 
     header.appendChild(title);
     header.appendChild(addBtn);
-
     container.appendChild(header);
 
     // =========================
@@ -48,7 +45,6 @@ export function renderProductLibrary(api) {
     // =========================
     const table = document.createElement('table');
     table.className = 'product-table';
-
     container.appendChild(table);
 
     // =========================
@@ -59,46 +55,120 @@ export function renderProductLibrary(api) {
 
     drawer.innerHTML = `
         <div class="product-drawer__inner">
+            <h3>Продукт</h3>
+            <!-- 1 -->
+            <div class="field">
+                <label for="name">Назва</label>
+                <input id="name" />
+            </div>
 
-            <h3 id="dTitle">Product</h3>
+            <!-- 2 -->
+            <div class="field">
+                <label for="description">Опис</label>
+                <textarea id="description"></textarea>
+            </div>
 
-            <input id="code" placeholder="Код виробу" />
-            <input id="name" placeholder="Назва" />
-            <textarea id="description" placeholder="Опис"></textarea>
+            <!-- 3 -->
+            <div class="form-row form-row--2">
+
+                <div class="field col">
+                    <label for="code">Код виробу</label>
+                    <input id="code" />
+                </div>
+
+                <div class="field col">
+                    <label for="category">Категорія</label>
+                    <select id="category">
+                        <option value="">Оберіть категрію</option>
+                        <option value="lz">Лікарський засіб</option>
+                        <option value="md">Медичний виріб</option>
+                        <option value="vet">Ветеринарний препарат</option>
+                        <option value="diet">Дієтична добавка/вода</option>
+                        <option value="cosmetic">Косметичний засіб</option>
+                        <option value="other">Інше</option>
+                    </select>
+                </div>
+
+            </div>
+
+            <!-- 4 -->
+            <div class="form-row form-row--3">
+
+                <div class="field col">
+                    <label for="primary_packaging">Первинна упак</label>
+                    <input id="primary_packaging" />
+                </div>
+
+                <div class="field col">
+                    <label for="fill_volume">Обʼєм (ml)</label>
+                    <input id="fill_volume" type="number" />
+                </div>
+
+                <div class="field col">
+                    <label for="fill_dose">Доза</label>
+                    <input id="fill_dose" type="number" />
+                </div>
+
+            </div>
+
+            <!-- 5 -->
+            <div class="form-row form-row--2">
+
+                <div class="field col">
+                    <label for="units_per_pack">Одиниць в упаковці</label>
+                    <input id="units_per_pack" type="number" />
+                </div>
+
+                <div class="field col">
+                    <label for="packs_per_box">Упаковок у коробці</label>
+                    <input id="packs_per_box" type="number" />
+                </div>
+
+            </div>
+
+            <!-- 6 -->
+            <div class="form-row form-row--2">
+
+                <div class="field col">
+                    <label for="storage_zone">Зона зберігання</label>
+                    <select id="storage_zone">
+                        <option value="">Оберіть зону</option>
+                        <option value="A">+2...+8°C</option>
+                        <option value="B">+15...+25°C</option>
+                        <option value="C">-20...-10°C</option>
+                        <option value="NA">Н/З</option>
+                    </select>
+                </div>
+
+                <div class="field col">
+                    <label for="shelf_life">Термін придатності (міс)</label>
+                    <input id="shelf_life" type="number" />
+                </div>
+
+            </div>
+
+            <!-- 7 -->
+            <div class="field">
+                <label for="registration_certificate">Нормативний документ</label>
+                <input id="registration_certificate" />
+            </div>
+
+            <!-- 8 -->
+            <div class="field">
+                <label for="country">Країна</label>
+                <input id="country" />
+            </div>
+
             <div id="errors" class="form-errors"></div>
 
-            <select id="category">
-                <option value="">Оберіть категорію виробу</option>
-                <option value="lz">Лікарський засіб</option>
-                <option value="md">Медичний виріб</option>
-                <option value="vet">Ветеринарний виріб</option>
-                <option value="diet">Дієтичні добавки, вода питна</option>
-                <option value="cosmetic">Косметичний засіб</option>
-                <option value="other">Інше</option>
-            </select>
-
-            <input id="primary_packaging" placeholder="Первинне пакування" />
-            <input id="fill_volume" placeholder="Доза наповнення" />
-            <input id="group_packaging" placeholder="Групове пакування (коробка)" />
-            <input id="units_per_box" placeholder="Упаковок у коробці" />
-            <input id="shelf_life" type="number" min="1" max="120" placeholder="Термін придатності (у місяцях)" />
-            <select id="storage_zone">
-                <option value="">Зона зберігання</option>
-                <option value="A">+2...+8°C</option>
-                <option value="C">-20...-10°C</option>
-                <option value="B">15...25°C RH&lt;65%</option>
-                <option value="NA">Н/З</option>
-            </select>
-            <input id="registration_certificate" placeholder="Registration cert" />
-            <input id="country" placeholder="Country" />
-
             <div class="product-drawer__actions">
-                <button id="save" class="btn btn--primary">Save</button>
-                <button id="cancel" class="btn">Cancel</button>
+                 
+                    <button id="save" class="btn btn--primary">ЗБЕРЕГТИ</button>
+                    <button id="cancel" class="btn">Скасувати</button>
             </div>
 
         </div>
-    `;
+        `;
 
     container.appendChild(drawer);
 
@@ -116,48 +186,68 @@ export function renderProductLibrary(api) {
         category: $('#category'),
         primary_packaging: $('#primary_packaging'),
         fill_volume: $('#fill_volume'),
-        group_packaging: $('#group_packaging'),
-        units_per_box: $('#units_per_box'),
-        shelf_life: $('#shelf_life'),
+        fill_dose: $('#fill_dose'),
+        units_per_pack: $('#units_per_pack'),
+        packs_per_box: $('#packs_per_box'),
         storage_zone: $('#storage_zone'),
-        registration_certificate: $('#registration_certificate'),
         country: $('#country')
     };
 
     const dTitle = $('#dTitle');
 
     // =========================
-    // DRAWER CONTROL
+    // BUILDERS
+    // =========================
+
+    function buildCharacteristics(p) {
+        const parts = [];
+
+        if (p.primary_packaging) parts.push(p.primary_packaging);
+        if (p.fill_volume) parts.push(`${p.fill_volume} ml`);
+        if (p.fill_dose) parts.push(p.fill_dose);
+
+        return parts.join(' / ');
+    }
+
+    function buildPackaging(p) {
+        const u = p.units_per_pack ? `${p.units_per_pack} шт в упак.` : '';
+        const b = p.packs_per_box ? `${p.packs_per_box} упак. в кор.` : '';
+
+        if (u && b) return `${u} / ${b}`;
+        return u || b || '';
+    }
+
+    function buildDisplayName(data) {
+        return `${data.name || ''} ${data.fill_volume || ''}ml / ${data.fill_dose || ''}`;
+    }
+
+    // =========================
+    // OPEN
     // =========================
     function open(product = null) {
 
         drawer.classList.add('product-drawer--open');
 
+        const inner = drawer.querySelector('.product-drawer__inner');
+        inner.scrollTop = 0;
+
         if (product) {
             dTitle.textContent = 'Edit Product';
             editId = product.id;
 
-            fields.code.value = product.code || '';
-            fields.name.value = product.name || '';
-            fields.description.value = product.description || '';
-            fields.category.value = product.category || '';
-
-            fields.primary_packaging.value = product.primary_packaging || '';
-            fields.fill_volume.value = product.fill_volume || '';
-            fields.group_packaging.value = product.group_packaging || '';
-            fields.units_per_box.value = product.units_per_box || '';
-
-            fields.shelf_life.value = product.shelf_life || '';
-            fields.storage_zone.value = product.storage_zone || '';
-
-            fields.registration_certificate.value = product.registration_certificate || '';
-            fields.country.value = product.country || '';
+            Object.keys(fields).forEach(k => {
+                fields[k].value = product[k] || '';
+            });
 
         } else {
             dTitle.textContent = 'New Product';
             editId = null;
 
             Object.values(fields).forEach(f => f.value = '');
+            
+            //  DEFAULT COUNTRY
+            fields.country.value = 'Україна';
+
         }
     }
 
@@ -168,58 +258,38 @@ export function renderProductLibrary(api) {
     // =========================
     // SAVE
     // =========================
-async function save() {
+    async function save() {
 
-    const data = {
-        code: fields.code.value.trim(),
-        name: fields.name.value.trim(),
-        description: fields.description.value.trim(),
-        category: fields.category.value,
+        const data = {};
 
-        primary_packaging: fields.primary_packaging.value.trim(),
-        fill_volume: fields.fill_volume.value.trim(),
+        Object.keys(fields).forEach(k => {
+            data[k] = fields[k].value.trim();
+        });
 
-        group_packaging: fields.group_packaging.value.trim(),
-        units_per_box: fields.units_per_box.value.trim(),
+        const errors = validate(data);
+        const errorBox = drawer.querySelector('#errors');
 
-        shelf_life: fields.shelf_life.value.trim(),
-        storage_zone: fields.storage_zone.value.trim(),
+        errorBox.innerHTML = '';
 
-        registration_certificate: fields.registration_certificate.value.trim(),
-        country: fields.country.value.trim()
-    };
+        if (errors.length) {
+            errorBox.innerHTML = errors.map(e => `<div>${e}</div>`).join('');
+            return;
+        }
 
-    const errors = validate(data);
+        data.display_name = buildDisplayName(data);
 
-    const errorBox = drawer.querySelector('#errors');
+        if (editId) {
+            await api.updateProduct(editId, data);
+        } else {
+            await api.createProduct(data);
+        }
 
-    // очистка UI
-    errorBox.innerHTML = '';
-    Object.values(fields).forEach(f => f.classList.remove('input-error'));
-
-    if (errors.length > 0) {
-
-        errorBox.innerHTML = errors.map(e => `<div>${e}</div>`).join('');
-
-        if (!data.code) fields.code.classList.add('input-error');
-        if (!data.name || data.name.length < 2) fields.name.classList.add('input-error');
-        if (!data.category) fields.category.classList.add('input-error');
-
-        return;
+        close();
+        await load();
     }
-
-    if (editId) {
-        await api.updateProduct(editId, data);
-    } else {
-        await api.createProduct(data);
-    }
-
-    close();
-    await load();
-}
 
     // =========================
-    // TABLE LOAD
+    // LOAD TABLE
     // =========================
     async function load() {
 
@@ -227,12 +297,13 @@ async function save() {
 
         table.innerHTML = `
             <tr>
-                <th class="col-code">Код</th>
-                <th>Назва</th>
-                <th>Опис (повна назва)</th>
-                <th class="col-category">Категорія</th>
-                <th>Первинне пакування</th>
-                <th class="col-actions">Дії</th>
+                <th>Код</th>
+                <th>Назва / Опис</th>
+                <th>Характеристика</th>
+                <th>Фасування</th>
+                <th>Країна</th>
+                <th>Зона</th>
+                <th>Дії</th>
             </tr>
         `;
 
@@ -241,23 +312,34 @@ async function save() {
             const row = document.createElement('tr');
 
             const tdCode = document.createElement('td');
-            tdCode.className = 'col-code';
             tdCode.textContent = p.code || '';
 
             const tdName = document.createElement('td');
-            tdName.textContent = p.name || '';
 
-            const tdDesc = document.createElement('td');
-            tdDesc.className = 'col-description';
-            tdDesc.textContent = p.description || '';
+            const name = document.createElement('div');
+            name.textContent = p.name || '';
+            name.style.fontWeight = '600';
 
-            const tdCat = document.createElement('td');
-            tdCat.className = 'col-category';
-            tdCat.textContent =
-                categoryMap[(p.category || '').toLowerCase()] || p.category || '';
+            const desc = document.createElement('div');
+            desc.textContent = p.description || '';
+            desc.style.fontSize = '12px';
+            desc.style.opacity = '0.7';
+
+            tdName.appendChild(name);
+            tdName.appendChild(desc);
+
+            const tdChar = document.createElement('td');
+            tdChar.textContent = buildCharacteristics(p);
 
             const tdPack = document.createElement('td');
-            tdPack.textContent = p.primary_packaging || '';
+            tdPack.textContent = buildPackaging(p);
+
+            const tdCountry = document.createElement('td');
+            tdCountry.textContent = p.country || '';
+
+            const tdZone = document.createElement('td');
+            tdZone.textContent =
+                storageZoneMap[p.storage_zone] || p.storage_zone || '';
 
             const tdActions = document.createElement('td');
             tdActions.className = 'col-actions';
@@ -266,11 +348,13 @@ async function save() {
             wrapper.className = 'actions-wrapper';
 
             const edit = document.createElement('button');
-            edit.textContent = 'Edit';
+            edit.textContent = 'Змінити';
+            edit.className = 'btn btn--small btn--edit';
             edit.onclick = () => open(p);
 
             const del = document.createElement('button');
-            del.textContent = 'Delete';
+            del.textContent = 'Видалити';
+            del.className = 'btn btn--small btn--danger';
             del.onclick = async () => {
                 await api.deleteProduct(p.id);
                 await load();
@@ -282,16 +366,29 @@ async function save() {
 
             row.appendChild(tdCode);
             row.appendChild(tdName);
-            row.appendChild(tdDesc);
-            row.appendChild(tdCat);
+            row.appendChild(tdChar);
             row.appendChild(tdPack);
+            row.appendChild(tdCountry);
+            row.appendChild(tdZone);
             row.appendChild(tdActions);
 
             table.appendChild(row);
         });
+    }
 
+    // =========================
+    // VALIDATION
+    // =========================
+    function validate(data) {
+        const errors = [];
 
-        console.log('PRODUCTS:', products);
+        if (!data.code) errors.push('Code required');
+        if (!data.name) errors.push('Name required');
+        if (!data.category) errors.push('Category required');
+        if (!data.fill_volume) errors.push('Fill volume required');
+        if (!data.units_per_pack) errors.push('Units per pack required');
+
+        return errors;
     }
 
     // =========================
@@ -301,32 +398,6 @@ async function save() {
     drawer.querySelector('#save').onclick = save;
     drawer.querySelector('#cancel').onclick = close;
 
-    // =========================
-    // VALIDATION
-    // =========================
-
-    function validate(data) {
-
-    const errors = [];
-
-    if (!data.code) {
-        errors.push('Code is required');
-    }
-
-    if (!data.name || data.name.length < 2) {
-        errors.push('Name must be at least 2 characters');
-    }
-
-    if (!data.category) {
-        errors.push('Category is required');
-    }
-
-    return errors;
-}
-
-    // =========================
-    // INIT
-    // =========================
     load();
 
     return container;

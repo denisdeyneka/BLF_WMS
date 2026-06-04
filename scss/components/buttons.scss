@@ -1,16 +1,63 @@
 .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
   padding: 6px 10px;
-  border: 1px solid var(--border);
-  background: white;
-  cursor: pointer;
+  font-size: 13px;
+
   border-radius: 4px;
+  border: 1px solid transparent;
+
+  cursor: pointer;
+  user-select: none;
+
+  transition: 0.15s ease;
 }
 
+/* PRIMARY */
 .btn--primary {
-  border-color: var(--primary);
+  background: #2d6cdf;
+  color: #fff;
+  border-color: #2d6cdf;
 }
 
+.btn--primary:hover {
+  background: #2459b8;
+  border-color: #2459b8;
+}
+
+/* EDIT */
+.btn--edit {
+  background: #2d6cdf;
+  color: #fff;
+  border-color: #2d6cdf;
+}
+
+.btn--edit:hover {
+  background: #2459b8;
+}
+
+/* DANGER */
 .btn--danger {
-  border-color: var(--danger);
-  color: var(--danger);
+  background: #e53935;
+  color: #fff;
+  border-color: #e53935;
+}
+
+.btn--danger:hover {
+  background: #c62828;
+}
+
+/* SMALL */
+.btn--small {
+  padding: 4px 8px;
+  font-size: 12px;
+}
+
+/* DEFAULT (secondary) */
+.btn:not(.btn--primary):not(.btn--edit):not(.btn--danger) {
+  background: #f5f5f5;
+  border-color: #ddd;
+  color: #222;
 }

@@ -1,5 +1,5 @@
 // =====================================
-// PRODUCT LIBRARY SERVICE (CRUD layer v2)
+// PRODUCT LIBRARY SERVICE (CRUD layer v3 FIXED)
 // =====================================
 
 const db = require('../db/dbQuery.cjs');
@@ -14,11 +14,13 @@ function getAllProducts() {
             code,
             name,
             category,
+            display_name,
             description,
             primary_packaging,
             fill_volume,
-            group_packaging,
-            units_per_box,
+            fill_dose,
+            units_per_pack,
+            packs_per_box,
             shelf_life,
             storage_zone,
             registration_certificate,
@@ -39,11 +41,13 @@ function createProduct(data) {
             code,
             name,
             category,
+            display_name,
             description,
             primary_packaging,
             fill_volume,
-            group_packaging,
-            units_per_box,
+            fill_dose,
+            units_per_pack,
+            packs_per_box,
             shelf_life,
             storage_zone,
             registration_certificate,
@@ -54,11 +58,13 @@ function createProduct(data) {
             '${escape(data.code)}',
             '${escape(data.name)}',
             '${escape(data.category)}',
+            '${escape(data.display_name)}',
             '${escape(data.description)}',
             '${escape(data.primary_packaging)}',
             '${escape(data.fill_volume)}',
-            '${escape(data.group_packaging)}',
-            '${escape(data.units_per_box)}',
+            '${escape(data.fill_dose)}',
+            '${escape(data.units_per_pack)}',
+            '${escape(data.packs_per_box)}',
             '${escape(data.shelf_life)}',
             '${escape(data.storage_zone)}',
             '${escape(data.registration_certificate)}',
@@ -69,21 +75,22 @@ function createProduct(data) {
 }
 
 // ==============================
-// UPDATE (FIXED - was old schema)
+// UPDATE
 // ==============================
 function updateProduct(id, data) {
-
     return db.run(`
         UPDATE product_library
         SET
             code = '${escape(data.code)}',
             name = '${escape(data.name)}',
             category = '${escape(data.category)}',
+            display_name = '${escape(data.display_name)}',
             description = '${escape(data.description)}',
             primary_packaging = '${escape(data.primary_packaging)}',
             fill_volume = '${escape(data.fill_volume)}',
-            group_packaging = '${escape(data.group_packaging)}',
-            units_per_box = '${escape(data.units_per_box)}',
+            fill_dose = '${escape(data.fill_dose)}',
+            units_per_pack = '${escape(data.units_per_pack)}',
+            packs_per_box = '${escape(data.packs_per_box)}',
             shelf_life = '${escape(data.shelf_life)}',
             storage_zone = '${escape(data.storage_zone)}',
             registration_certificate = '${escape(data.registration_certificate)}',
@@ -118,7 +125,7 @@ function getProductById(id) {
 }
 
 // ==============================
-// SEARCH (FIXED)
+// SEARCH
 // ==============================
 function searchProducts(query) {
     return db.select(`
@@ -128,6 +135,7 @@ function searchProducts(query) {
           AND (
               name LIKE '%${query}%'
               OR code LIKE '%${query}%'
+              OR display_name LIKE '%${query}%'
           )
         ORDER BY name
     `);
@@ -141,6 +149,9 @@ function escape(str) {
     return String(str).replace(/'/g, "''");
 }
 
+// ==============================
+// EXPORT
+// ==============================
 module.exports = {
     getAllProducts,
     createProduct,
