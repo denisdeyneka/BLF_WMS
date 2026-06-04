@@ -357,7 +357,7 @@ export function renderProductLibrary(api) {
                     <th class="col-code" >Код</th>
                     <th class="col-category">Категорія</th>
                     <th class="col-name">Назва / Опис</th>
-                    <th class="col-char">Характеристика</th>
+                    <th class="col-char">форма/об'єм/доза нап.</th>
                     <th class="col-packaging">Фасування</th>
                     <th class="col-country">Країна</th>
                     <th class="col-zone">Зона/умови зберігання</th>

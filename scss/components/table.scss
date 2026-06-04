@@ -1,7 +1,7 @@
 .product-table {
-  width: 100%;
+  // min-width: 1200px;
   border-collapse: collapse;
-  table-layout: fixed;
+  table-layout: auto;
 
   display: block;
 
@@ -20,71 +20,62 @@
   overflow: hidden;
   text-overflow: ellipsis;
   vertical-align: middle;
+  //white-space: nowrap;
 }
 
-
 /* HEADER */
-
 .product-table thead th,
 .product-table tr:first-child th {
   position: sticky;
   top: 0;
-
   background: #fff;
-
   z-index: 10;
-
   box-shadow: 0 1px 0 #ddd;
 }
 
-
 /* CODE */
 .col-code {
-  width: 60px;
+  min-width: 60px;
   white-space: nowrap;
 }
 
 /*CATEGORY*/
 .col-category {
-  width: 40px;
+  min-width: 60px;
+  max-width: 80px;
 }
 
 /* NAME */
 .col-name {
-  width: 260px;
+  max-width: 300px;
   text-align: center;
 }
 
 /*SHORT DESCRIPTION (CHARACTERISTICS)*/
 .col-char {
-  width: 180px;
+  min-width: 200px;
   text-align: center;
-}
-
-/* CATEGORY */
-.col-category {
-  width: 160px;
 }
 
 /* PRIMARY PACKAGING */
 .col-packaging {
-  width: 180px;
+  min-width: 200px;
 }
 
 /*COUNTRY*/
 .col-country {
-  width: 120px;
+ min-width: 120px;
 }
 
 /* ZONE */
 .col-zone {
-  width: 160px;
+  min-width: 160px;
   text-align: center;
 }
 
 /* ACTIONS */
 .col-actions {
-  width: 200px;
+  min-width: 200px;
   text-align: center;
 }
 
@@ -94,4 +85,9 @@
   justify-content: center;
   align-items: center;
   gap: 10px;
+}
+
+.product-table tbody tr:hover {
+  background: #c8c8f3;
+  cursor: pointer;
 }

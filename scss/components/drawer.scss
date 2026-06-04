@@ -11,6 +11,7 @@
 
   overflow: hidden;
   transition: width 0.25s ease;
+  z-index: 1000;
 }
 
 .product-drawer--open {
