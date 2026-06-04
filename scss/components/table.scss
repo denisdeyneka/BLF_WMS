@@ -2,6 +2,14 @@
   width: 100%;
   border-collapse: collapse;
   table-layout: fixed;
+
+  display: block;
+
+  max-height: calc(100vh - 180px);
+  overflow-y: auto;
+  overflow-x: auto;
+
+  text-align: center;
 }
 
 /* общие ячейки */
@@ -11,13 +19,46 @@
   border-bottom: 1px solid #eee;
   overflow: hidden;
   text-overflow: ellipsis;
-  vertical-align: top;
+  vertical-align: middle;
 }
+
+
+/* HEADER */
+
+.product-table thead th,
+.product-table tr:first-child th {
+  position: sticky;
+  top: 0;
+
+  background: #fff;
+
+  z-index: 10;
+
+  box-shadow: 0 1px 0 #ddd;
+}
+
 
 /* CODE */
 .col-code {
-  width: 150px;
+  width: 60px;
   white-space: nowrap;
+}
+
+/*CATEGORY*/
+.col-category {
+  width: 40px;
+}
+
+/* NAME */
+.col-name {
+  width: 260px;
+  text-align: center;
+}
+
+/*SHORT DESCRIPTION (CHARACTERISTICS)*/
+.col-char {
+  width: 180px;
+  text-align: center;
 }
 
 /* CATEGORY */
@@ -30,16 +71,9 @@
   width: 180px;
 }
 
-/* VOLUME */
-.col-volume {
-  width: 100px;
-  text-align: center;
-}
-
-/* UNITS */
-.col-units {
-  width: 100px;
-  text-align: center;
+/*COUNTRY*/
+.col-country {
+  width: 120px;
 }
 
 /* ZONE */
@@ -50,7 +84,7 @@
 
 /* ACTIONS */
 .col-actions {
-  width: 120px;
+  width: 200px;
   text-align: center;
 }
 

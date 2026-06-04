@@ -1,15 +1,16 @@
 // ==============================
 // PRODUCT LIBRARY UI (FINAL CLEAN VERSION)
+// D:\my_projects\BLF_WMS\modules\ui\productLibrary.js
 // ==============================
 
 export function renderProductLibrary(api) {
 
     const categoryMap = {
-        lz: 'Лікарський засіб',
-        md: 'Медичний виріб',
-        vet: 'Ветеринарний препарат',
-        diet: 'Дієтична добавка / вода',
-        cosmetic: 'Косметичний засіб',
+        lz: 'ЛЗ',
+        md: 'МВ',
+        vet: 'Вет. преп.',
+        diet: 'Дієт. доб./вода',
+        cosmetic: 'КЗ',
         other: 'Інше'
     };
 
@@ -162,9 +163,9 @@ export function renderProductLibrary(api) {
             <div id="errors" class="form-errors"></div>
 
             <div class="product-drawer__actions">
-                 
                     <button id="save" class="btn btn--primary">ЗБЕРЕГТИ</button>
-                    <button id="cancel" class="btn">Скасувати</button>
+                    <button id="saveAsNew" class="btn btn--warning">ЗБЕРЕГТИ ЯК НОВИЙ</button>
+                    <button id="cancel" class="btn btn--danger" >Скасувати</button>
             </div>
 
         </div>
@@ -210,8 +211,8 @@ export function renderProductLibrary(api) {
     }
 
     function buildPackaging(p) {
-        const u = p.units_per_pack ? `${p.units_per_pack} шт в упак.` : '';
-        const b = p.packs_per_box ? `${p.packs_per_box} упак. в кор.` : '';
+        const u = p.units_per_pack ? `${p.units_per_pack} шт/уп.` : '';
+        const b = p.packs_per_box ? `${p.packs_per_box} уп./кор.` : '';
 
         if (u && b) return `${u} / ${b}`;
         return u || b || '';
@@ -234,6 +235,9 @@ export function renderProductLibrary(api) {
         // =========================
         // CREATE MODE
         // =========================
+        const cloneBtn = drawer.querySelector('#saveAsNew');
+        cloneBtn.style.display = 'none';
+
         if (!product) {
             dTitle.textContent = 'Створити продукт';
             editId = null;
@@ -241,6 +245,8 @@ export function renderProductLibrary(api) {
             Object.values(fields).forEach(f => f.value = '');
 
             fields.country.value = 'Україна';
+
+            drawer.querySelector('#saveAsNew').style.display = 'none';
 
             return;
         }
@@ -250,6 +256,8 @@ export function renderProductLibrary(api) {
         // =========================
         dTitle.textContent = 'Змінити продукт';
         editId = product.id;
+
+        cloneBtn.style.display = 'inline-flex';
 
         // 🔥 защита от "пустого/урезанного" объекта
         const p = product || {};
@@ -279,11 +287,7 @@ export function renderProductLibrary(api) {
     // =========================
     async function save() {
 
-        const data = {};
-
-        Object.keys(fields).forEach(k => {
-            data[k] = fields[k].value.trim();
-        });
+        const data = collectData();
 
         const errors = validate(data);
         const errorBox = drawer.querySelector('#errors');
@@ -295,8 +299,6 @@ export function renderProductLibrary(api) {
             return;
         }
 
-        data.display_name = buildDisplayName(data);
-
         if (editId) {
             await api.updateProduct(editId, data);
         } else {
@@ -307,6 +309,41 @@ export function renderProductLibrary(api) {
         await load();
     }
 
+    async function saveAsNew() {
+
+        const data = collectData();
+
+        const errors = validate(data);
+        const errorBox = drawer.querySelector('#errors');
+
+        errorBox.innerHTML = '';
+
+        if (errors.length) {
+            errorBox.innerHTML = errors.map(e => `<div>${e}</div>`).join('');
+            return;
+        }
+
+        // ключевой момент — всегда создаём новый объект
+        delete data.id;
+
+        await api.createProduct(data);
+
+        close();
+        await load();
+    }
+
+    function collectData() {
+        const data = {};
+
+        Object.keys(fields).forEach(k => {
+            data[k] = fields[k].value.trim();
+        });
+
+        data.display_name = buildDisplayName(data);
+
+        return data;
+    }
+
     // =========================
     // LOAD TABLE
     // =========================
@@ -315,15 +352,19 @@ export function renderProductLibrary(api) {
         const products = await api.getProducts();
 
         table.innerHTML = `
-            <tr>
-                <th>Код</th>
-                <th>Назва / Опис</th>
-                <th>Характеристика</th>
-                <th>Фасування</th>
-                <th>Країна</th>
-                <th>Зона</th>
-                <th>Дії</th>
-            </tr>
+            <thead>
+                <tr>
+                    <th class="col-code" >Код</th>
+                    <th class="col-category">Категорія</th>
+                    <th class="col-name">Назва / Опис</th>
+                    <th class="col-char">Характеристика</th>
+                    <th class="col-packaging">Фасування</th>
+                    <th class="col-country">Країна</th>
+                    <th class="col-zone">Зона/умови зберігання</th>
+                    <th class="col-actions">Дії</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
         `;
 
         products.forEach(p => {
@@ -333,6 +374,10 @@ export function renderProductLibrary(api) {
             const tdCode = document.createElement('td');
             tdCode.textContent = p.code || '';
             tdCode.className = 'col-code';
+
+            const tdCategory = document.createElement('td');
+            tdCategory.textContent = categoryMap[p.category] || p.category || '';
+            tdCategory.className = 'col-category';
 
             const tdName = document.createElement('td');
             tdName.className = 'col-name';
@@ -351,10 +396,12 @@ export function renderProductLibrary(api) {
 
             const tdChar = document.createElement('td');
             tdChar.className = 'col-char';
+            tdChar.style.fontSize= '14px'
             tdChar.textContent = buildCharacteristics(p);
 
             const tdPack = document.createElement('td');
             tdPack.className = 'col-pack';
+            tdPack.style.fontSize = '14px';
             tdPack.textContent = buildPackaging(p);
 
             const tdCountry = document.createElement('td');
@@ -363,27 +410,26 @@ export function renderProductLibrary(api) {
 
             const tdZone = document.createElement('td');
             tdZone.className = 'col-zone';
+            tdZone.style.fontSize = '12px';
             tdZone.textContent =
                 storageZoneMap[p.storage_zone] || p.storage_zone || '';
 
             const tdActions = document.createElement('td');
             tdActions.className = 'col-actions';
-            tdActions.className = 'col-actions';
-
+            
             const wrapper = document.createElement('div');
             wrapper.className = 'actions-wrapper';
 
             const edit = document.createElement('button');
             edit.textContent = 'Змінити';
-            edit.className = 'btn btn--small btn--edit';
+            edit.className = 'btn btn--primary';
             edit.onclick = () => {
-            console.log('PRODUCT FROM TABLE:', p);
-            open(p);
-        };
+                open(p);
+            };
 
             const del = document.createElement('button');
             del.textContent = 'Видалити';
-            del.className = 'btn btn--small btn--danger';
+            del.className = 'btn btn--danger';
             del.onclick = async () => {
                 await api.deleteProduct(p.id);
                 await load();
@@ -394,6 +440,7 @@ export function renderProductLibrary(api) {
             tdActions.appendChild(wrapper);
 
             row.appendChild(tdCode);
+            row.appendChild(tdCategory);
             row.appendChild(tdName);
             row.appendChild(tdChar);
             row.appendChild(tdPack);
@@ -401,7 +448,7 @@ export function renderProductLibrary(api) {
             row.appendChild(tdZone);
             row.appendChild(tdActions);
 
-            table.appendChild(row);
+            table.querySelector('tbody').appendChild(row);
         });
     }
 
@@ -425,6 +472,7 @@ export function renderProductLibrary(api) {
     // =========================
     addBtn.onclick = () => open();
     drawer.querySelector('#save').onclick = save;
+    drawer.querySelector('#saveAsNew').onclick = saveAsNew;
     drawer.querySelector('#cancel').onclick = close;
 
     load();
