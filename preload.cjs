@@ -6,30 +6,24 @@ const { contextBridge, ipcRenderer } = require('electron');
 // CLEAN DATA LAYER API
 // ==============================
 contextBridge.exposeInMainWorld('api', {
+  // =========================
+  // SYSTEM
+  // =========================
+  ping: () => ipcRenderer.invoke('system:ping'),
 
-    // =========================
-    // SYSTEM
-    // =========================
-    ping: () => ipcRenderer.invoke('system:ping'),
+  // =========================
+  // PRODUCTS
+  // =========================
+  getProducts: () => ipcRenderer.invoke('products:getAll'),
 
-    // =========================
-    // PRODUCTS
-    // =========================
-    getProducts: () => ipcRenderer.invoke('products:getAll'),
+  createProduct: (data) => ipcRenderer.invoke('products:create', data),
 
-    createProduct: (data) =>
-        ipcRenderer.invoke('products:create', data),
+  updateProduct: (id, data) =>
+    ipcRenderer.invoke('products:update', { id, data }),
 
-    updateProduct: (id, data) =>
-        ipcRenderer.invoke('products:update', { id, data }),
+  deleteProduct: (id) => ipcRenderer.invoke('products:delete', id),
 
-    deleteProduct: (id) =>
-        ipcRenderer.invoke('products:delete', id),
+  getProductById: (id) => ipcRenderer.invoke('products:getById', id),
 
-    getProductById: (id) =>
-        ipcRenderer.invoke('products:getById', id),
-
-    searchProducts: (query) =>
-        ipcRenderer.invoke('products:search', query),
-
+  searchProducts: (query) => ipcRenderer.invoke('products:search', query),
 });

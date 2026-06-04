@@ -3,7 +3,6 @@
 // ==========================
 
 export function renderTable(warehouse) {
-
   const container = document.createElement('div');
   container.style.marginTop = '20px';
 
@@ -19,8 +18,7 @@ export function renderTable(warehouse) {
   // header
   const header = document.createElement('tr');
 
-  ['Location', 'Product', 'Series', 'Qty'].forEach(h => {
-
+  ['Location', 'Product', 'Series', 'Qty'].forEach((h) => {
     const th = document.createElement('th');
     th.textContent = h;
     th.style.border = '1px solid #ccc';
@@ -32,25 +30,17 @@ export function renderTable(warehouse) {
   table.appendChild(header);
 
   // data rows
-  warehouse.zones.forEach(zone => {
-    zone.racks.forEach(rack => {
-      rack.locations.forEach(loc => {
-
+  warehouse.zones.forEach((zone) => {
+    zone.racks.forEach((rack) => {
+      rack.locations.forEach((loc) => {
         if (!loc.stock || loc.stock.length === 0) return;
 
-        loc.stock.forEach(item => {
-
+        loc.stock.forEach((item) => {
           const row = document.createElement('tr');
 
-          const cells = [
-            loc.id,
-            item.productId,
-            item.series,
-            item.qty,
-          ];
+          const cells = [loc.id, item.productId, item.series, item.qty];
 
-          cells.forEach(value => {
-
+          cells.forEach((value) => {
             const td = document.createElement('td');
             td.textContent = value;
             td.style.border = '1px solid #ccc';
@@ -61,12 +51,11 @@ export function renderTable(warehouse) {
 
           table.appendChild(row);
         });
-
       });
     });
   });
 
   container.appendChild(table);
-  
+
   return container;
 }

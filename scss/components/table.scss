@@ -41,13 +41,12 @@
 
 /*CATEGORY*/
 .col-category {
-  min-width: 60px;
-  max-width: 80px;
+  min-width: 120px;
 }
 
 /* NAME */
 .col-name {
-  max-width: 300px;
+  min-width: 300px;
   text-align: center;
 }
 
@@ -64,7 +63,7 @@
 
 /*COUNTRY*/
 .col-country {
- min-width: 120px;
+  min-width: 120px;
 }
 
 /* ZONE */

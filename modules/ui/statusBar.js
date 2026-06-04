@@ -12,8 +12,7 @@ export function updateStatus(message) {
     console.log('Status element not found');
     return;
   }
-  
+
   // Обновляем текст статуса
   statusEl.textContent = message;
-  
 }

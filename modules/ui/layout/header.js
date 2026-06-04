@@ -1,5 +1,4 @@
 export function createHeader(onViewChange) {
-
   const header = document.createElement('div');
 
   header.style.padding = '10px';

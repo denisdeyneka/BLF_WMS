@@ -11,22 +11,22 @@ const { getDB, saveDB } = require('./database.cjs');
 //  * @returns {Array<Object>} массив результатов
 //  */
 function select(sql) {
-    const db = getDB();
+  const db = getDB();
 
-    // готовим statement
-    const stmt = db.prepare(sql);
+  // готовим statement
+  const stmt = db.prepare(sql);
 
-    const result = [];
+  const result = [];
 
-    // проходим по всем строкам результата
-    while (stmt.step()) {
-        result.push(stmt.getAsObject());
-    }
+  // проходим по всем строкам результата
+  while (stmt.step()) {
+    result.push(stmt.getAsObject());
+  }
 
-    // освобождаем память
-    stmt.free();
+  // освобождаем память
+  stmt.free();
 
-    return result;
+  return result;
 }
 
 // /**
@@ -35,21 +35,21 @@ function select(sql) {
 //  * @returns {any} результат выполнения
 //  */
 function run(sql) {
-    const db = getDB();
+  const db = getDB();
 
-    // выполняем запрос
-    const result = db.run(sql);
+  // выполняем запрос
+  const result = db.run(sql);
 
-    // сохраняем файл базы (sql.js работает в памяти)
-    saveDB();
+  // сохраняем файл базы (sql.js работает в памяти)
+  saveDB();
 
-    return result;
+  return result;
 }
 
 // /**
 //  * единый экспорт слоя БД
 //  */
 module.exports = {
-    select,
-    run
+  select,
+  run,
 };

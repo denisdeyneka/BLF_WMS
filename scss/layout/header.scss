@@ -1,7 +1,41 @@
 .shell-header {
   display: flex;
+  height: 50px;
   gap: 10px;
   padding: 10px;
   border-bottom: 1px solid var(--border);
   background: var(--panel);
+}
+
+nav {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+nav ul {
+  display: flex;
+}
+
+li {
+  list-style: none;
+  display: inline-block;
+}
+
+button {
+  padding: 6px 12px;
+  border: none;
+  background: var(--button);
+  color: var(--text);
+  cursor: pointer;
+  border-radius: 4px;
+  text-align: center;
+  vertical-align: middle;
+  height: 100%;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  padding: 10px 5px;
 }

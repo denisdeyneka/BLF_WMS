@@ -13,28 +13,27 @@ const api = window.api;
 let currentView = 'products';
 
 async function render() {
+  content.innerHTML = '';
 
-    content.innerHTML = '';
+  if (currentView === 'products') {
+    content.appendChild(renderProductLibrary(api));
+  }
 
-    if (currentView === 'products') {
-        content.appendChild(renderProductLibrary(api));
-    }
-
-    if (currentView === 'warehouse') {
-        // ВРЕМЕННО: пока нет API warehouse
-        const warehouse = await api.getWarehouse?.() || { zones: [] };
-        content.appendChild(renderWarehouse(warehouse));
-    }
+  if (currentView === 'warehouse') {
+    // ВРЕМЕННО: пока нет API warehouse
+    const warehouse = (await api.getWarehouse?.()) || { zones: [] };
+    content.appendChild(renderWarehouse(warehouse));
+  }
 }
 
 btnProducts.onclick = () => {
-    currentView = 'products';
-    render();
+  currentView = 'products';
+  render();
 };
 
 btnWarehouse.onclick = () => {
-    currentView = 'warehouse';
-    render();
+  currentView = 'warehouse';
+  render();
 };
 
 render();

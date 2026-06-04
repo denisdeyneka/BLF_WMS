@@ -1,5 +1,4 @@
 export function createFooter() {
-
   const footer = document.createElement('div');
 
   footer.id = 'footer-status';

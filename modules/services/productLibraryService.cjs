@@ -8,7 +8,7 @@ const db = require('../db/dbQuery.cjs');
 // SELECT ALL
 // ==============================
 function getAllProducts() {
-    return db.select(`
+  return db.select(`
         SELECT
             id,
             code,
@@ -36,7 +36,7 @@ function getAllProducts() {
 // CREATE
 // ==============================
 function createProduct(data) {
-    return db.run(`
+  return db.run(`
         INSERT INTO product_library (
             code,
             name,
@@ -78,7 +78,7 @@ function createProduct(data) {
 // UPDATE
 // ==============================
 function updateProduct(id, data) {
-    return db.run(`
+  return db.run(`
         UPDATE product_library
         SET
             code = '${escape(data.code)}',
@@ -103,7 +103,7 @@ function updateProduct(id, data) {
 // DELETE (soft)
 // ==============================
 function deleteProduct(id) {
-    return db.run(`
+  return db.run(`
         UPDATE product_library
         SET is_active = 0
         WHERE id = ${id}
@@ -114,21 +114,21 @@ function deleteProduct(id) {
 // GET BY ID
 // ==============================
 function getProductById(id) {
-    const result = db.select(`
+  const result = db.select(`
         SELECT *
         FROM product_library
         WHERE id = ${id}
         LIMIT 1
     `);
 
-    return result[0] || null;
+  return result[0] || null;
 }
 
 // ==============================
 // SEARCH
 // ==============================
 function searchProducts(query) {
-    return db.select(`
+  return db.select(`
         SELECT *
         FROM product_library
         WHERE is_active = 1
@@ -145,18 +145,18 @@ function searchProducts(query) {
 // ESCAPE
 // ==============================
 function escape(str) {
-    if (!str) return '';
-    return String(str).replace(/'/g, "''");
+  if (!str) return '';
+  return String(str).replace(/'/g, "''");
 }
 
 // ==============================
 // EXPORT
 // ==============================
 module.exports = {
-    getAllProducts,
-    createProduct,
-    updateProduct,
-    deleteProduct,
-    getProductById,
-    searchProducts
+  getAllProducts,
+  createProduct,
+  updateProduct,
+  deleteProduct,
+  getProductById,
+  searchProducts,
 };

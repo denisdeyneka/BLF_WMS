@@ -3,7 +3,6 @@
 // ==========================
 
 export function renderWarehouse(warehouse) {
-
   const container = document.createElement('div');
   container.style.marginTop = '20px';
   container.style.fontFamily = 'Arial';
@@ -13,8 +12,7 @@ export function renderWarehouse(warehouse) {
   container.appendChild(title);
 
   // ===== ZONES =====
-  warehouse.zones.forEach(zone => {
-
+  warehouse.zones.forEach((zone) => {
     const zoneBlock = document.createElement('div');
 
     // визуальный блок зоны
@@ -32,8 +30,7 @@ export function renderWarehouse(warehouse) {
     zoneBlock.appendChild(zoneTitle);
 
     // ===== RACKS =====
-    zone.racks.forEach(rack => {
-
+    zone.racks.forEach((rack) => {
       const rackBlock = document.createElement('div');
       rackBlock.style.marginBottom = '10px';
 
@@ -52,8 +49,7 @@ export function renderWarehouse(warehouse) {
       locGrid.style.flexWrap = 'wrap';
       locGrid.style.marginTop = '5px';
 
-      rack.locations.forEach(loc => {
-
+      rack.locations.forEach((loc) => {
         const cell = document.createElement('div');
 
         // базовый стиль ячейки
@@ -73,7 +69,6 @@ export function renderWarehouse(warehouse) {
 
         // STOCK
         if (!loc.stock || loc.stock.length === 0) {
-
           cell.style.opacity = '0.5';
 
           const empty = document.createElement('div');
@@ -81,19 +76,15 @@ export function renderWarehouse(warehouse) {
           empty.style.fontSize = '11px';
 
           cell.appendChild(empty);
-
         } else {
-
           // есть товар → выделяем цветом
           cell.style.border = '1px solid #2e7d32';
           cell.style.background = '#e8f5e9';
 
-          loc.stock.forEach(item => {
-
+          loc.stock.forEach((item) => {
             const line = document.createElement('div');
 
-            line.textContent =
-              `${item.productId} | ${item.series} | ${item.qty}`;
+            line.textContent = `${item.productId} | ${item.series} | ${item.qty}`;
 
             line.style.fontSize = '11px';
 
