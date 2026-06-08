@@ -203,10 +203,13 @@ export function renderProductLibrary(api) {
     const parts = [];
 
     if (p.primary_packaging) parts.push(p.primary_packaging);
-    if (p.fill_volume) parts.push(`${p.fill_volume} ml`);
-    if (p.fill_dose) parts.push(p.fill_dose);
+    if (p.fill_volume) parts.push(`${p.fill_volume} мл`);
+    if (p.fill_dose) parts.push(`${p.fill_dose} мл`);
+    if (p.units_per_pack) parts.push(`${p.units_per_pack} шт/уп`);
+    if (p.packs_per_box) parts.push(`${p.packs_per_box} уп/кор`);
+    if (p.country) parts.push(`${p.country}`);
 
-    return parts.join(' / ');
+    return parts.join(' | ');
   }
 
   function buildPackaging(p) {
@@ -218,7 +221,7 @@ export function renderProductLibrary(api) {
   }
 
   function buildDisplayName(data) {
-    return `${data.name || ''} ${data.fill_volume || ''}ml / ${data.fill_dose || ''}`;
+    return `${data.name || ''} | ${buildCharacteristics(data)}`;
   }
 
   // =========================
@@ -297,10 +300,18 @@ export function renderProductLibrary(api) {
     }
 
     if (editId) {
+
+      const confirmed = confirm('Зберегти зміни в продукті?');
+
+      if (!confirmed) return;
+
       await api.updateProduct(editId, data);
+
     } else {
+
       await api.createProduct(data);
-    }
+
+    } 
 
     close();
     await load();
@@ -321,6 +332,11 @@ export function renderProductLibrary(api) {
 
     // ключевой момент — всегда создаём новый объект
     delete data.id;
+    const confirmed = confirm(
+      'Створити новий продукт на основі поточного?'
+    );
+
+    if (!confirmed) return;
 
     await api.createProduct(data);
 
@@ -344,23 +360,41 @@ export function renderProductLibrary(api) {
   // LOAD TABLE
   // =========================
   async function load() {
+     table.innerHTML = '';
     const products = await api.getProducts();
 
-    table.innerHTML = `
-            <thead>
-                <tr>
-                    <th class="col-code" >Код</th>
-                    <th class="col-category">Категорія</th>
-                    <th class="col-name">Назва / Опис</th>
-                    <th class="col-char">форма/об'єм/доза нап.</th>
-                    <th class="col-packaging">Фасування</th>
-                    <th class="col-country">Країна</th>
-                    <th class="col-zone">Зона/умови зберігання</th>
-                    <th class="col-actions">Дії</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        `;
+    const thead = document.createElement("thead");
+    const headerRow = document.createElement("tr");
+
+    const headers = [
+        { text: "Код", className: "col-code" },
+        { text: "Категорія", className: "col-category" },
+        { text: "Назва / Опис", className: "col-name", isHTML: true },
+        { text: "форма/об'єм/доза нап.", className: "col-char" },
+        { text: "Фасування", className: "col-packaging" },
+        { text: "Країна реєстрації", className: "col-country" },
+        { text: "Зона/умови зберігання", className: "col-zone" },
+        { text: "Дії", className: "col-actions" }
+    ];
+
+    headers.forEach(header => {
+        const th = document.createElement("th");
+        th.className = header.className;
+
+        if (header.isHTML) {
+            th.innerHTML = "Назва <br>/ Опис";
+        } else {
+            th.textContent = header.text;
+        }
+
+        headerRow.append(th);
+    });
+
+    thead.append(headerRow);
+
+    const tbody = document.createElement("tbody");
+
+    table.append(thead, tbody);
 
     products.forEach((p) => {
       const row = document.createElement('tr');
@@ -425,6 +459,18 @@ export function renderProductLibrary(api) {
       del.textContent = 'Видалити';
       del.className = 'btn btn--danger';
       del.onclick = async () => {
+
+        const characteristics = buildCharacteristics(p);
+
+        const confirmed = confirm(
+           `Видалити продукт? 
+           ${p.display_name}`
+        );
+
+        
+
+        if (!confirmed) return;
+
         await api.deleteProduct(p.id);
         await load();
       };
