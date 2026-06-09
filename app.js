@@ -1,5 +1,5 @@
-import { renderProductLibrary } from './modules/ui/productLibrary.js';
-import { renderWarehouse } from './modules/ui/renderWarehouse.js';
+import { renderProductLibrary } from './modules/productLibrary/productLibrary.js';
+// import { renderWarehouse } from './modules/ui/renderWarehouse.js';
 
 console.log('APP START');
 
