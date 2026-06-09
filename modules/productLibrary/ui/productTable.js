@@ -1,3 +1,5 @@
+// D:\my_projects\BLF_WMS\modules\productLibrary\ui\productTable.js
+
 export function renderTable({
   table,
   products,
@@ -5,7 +7,7 @@ export function renderTable({
   storageZoneMap,
   buildCharacteristics,
   buildShortCharacteristics,
-  drawerController,
+  openEdit,
   api,
   reload,
 }) {
@@ -20,7 +22,7 @@ export function renderTable({
     'Код',
     'Категорія',
     'Назва / Опис',
-    "Характеристики",
+    'Характеристики',
     'Фасування',
     'Країна',
     'Зона',
@@ -64,18 +66,25 @@ export function renderTable({
     const wrap = document.createElement('div');
     wrap.className = 'actions-wrapper';
 
+    // =========================
+    // EDIT (NOW VIA CALLBACK)
+    // =========================
     const edit = document.createElement('button');
     edit.className = 'btn btn--primary';
     edit.textContent = 'Змінити';
-    edit.onclick = () => drawerController.open(p);
 
+    edit.onclick = () => openEdit(p);
+
+    // =========================
+    // DELETE (TEMPORARY HERE)
+    // =========================
     const del = document.createElement('button');
     del.className = 'btn btn--danger';
     del.textContent = 'Видалити';
 
     del.onclick = async () => {
-      // const ok = confirm(`Видалити ${p.name}?`);
-      // if (!ok) return;
+      const ok = confirm(`Видалити ${p.name}?`);
+      if (!ok) return;
 
       await api.deleteProduct(p.id);
       await reload();
@@ -84,7 +93,17 @@ export function renderTable({
     wrap.append(edit, del);
     tdActions.appendChild(wrap);
 
-    row.append(tdCode, tdCategory, tdName, tdChar, tdPack, tdCountry, tdZone, tdActions);
+    row.append(
+      tdCode,
+      tdCategory,
+      tdName,
+      tdChar,
+      tdPack,
+      tdCountry,
+      tdZone,
+      tdActions
+    );
+
     tbody.appendChild(row);
   });
 

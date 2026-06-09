@@ -1,191 +1,111 @@
-// D:\my_projects\BLF_WMS\modules\ui\productlibrary\drawer.js
+// // D:\my_projects\BLF_WMS\modules\productLibrary\ui\productTable.js
 
-export function createDrawer({
-  drawer,
-  api,
-  validateProduct,
-  buildDisplayName,
-}) {
-  let editId = null;
-  let originalData = null;
+// export function renderTable({
+//   table,
+//   products,
+//   categoryMap,
+//   storageZoneMap,
+//   buildCharacteristics,
+//   buildShortCharacteristics,
+//   openEdit,
+//   api,
+//   reload,
+// }) {
+//   table.innerHTML = '';
 
-  const $ = (id) => drawer.querySelector(id);
+//   const thead = document.createElement('thead');
+//   const tbody = document.createElement('tbody');
 
-  const fields = {
-    code: $('#code'),
-    name: $('#name'),
-    description: $('#description'),
-    category: $('#category'),
-    primary_packaging: $('#primary_packaging'),
-    fill_volume: $('#fill_volume'),
-    fill_dose: $('#fill_dose'),
-    units_per_pack: $('#units_per_pack'),
-    packs_per_box: $('#packs_per_box'),
-    storage_zone: $('#storage_zone'),
-    country: $('#country'),
-  };
+//   const headerRow = document.createElement('tr');
 
-  const dTitle = $('#dTitle');
+//   const headers = [
+//     'Код',
+//     'Категорія',
+//     'Назва / Опис',
+//     'Характеристики',
+//     'Фасування',
+//     'Країна',
+//     'Зона',
+//     'Дії',
+//   ];
 
-  // =========================
-  // CHANGE TRACKING
-  // =========================
-  function markChanges() {
-    if (!originalData) return;
+//   headers.forEach((h) => {
+//     const th = document.createElement('th');
+//     th.textContent = h;
+//     headerRow.appendChild(th);
+//   });
 
-    Object.keys(fields).forEach((key) => {
-      const input = fields[key];
+//   thead.appendChild(headerRow);
 
-      const original = originalData[key] ?? '';
-      const current = input.value.trim();
+//   products.forEach((p) => {
+//     const row = document.createElement('tr');
 
-      if (current !== String(original).trim()) {
-        input.classList.add('is-changed');
-      } else {
-        input.classList.remove('is-changed');
-      }
-    });
-  }
+//     const tdCode = document.createElement('td');
+//     tdCode.textContent = p.code || '';
 
-  Object.values(fields).forEach((input) => {
-    input.addEventListener('input', markChanges);
-  });
+//     const tdCategory = document.createElement('td');
+//     tdCategory.textContent = categoryMap[p.category] || '';
 
-  // =========================
-  // COLLECT DATA
-  // =========================
-  function collectData() {
-    const data = {};
+//     const tdName = document.createElement('td');
+//     tdName.textContent = p.name || '';
 
-    Object.keys(fields).forEach((k) => {
-      data[k] = fields[k].value.trim();
-    });
+//     const tdChar = document.createElement('td');
+//     tdChar.textContent = buildShortCharacteristics(p);
 
-    data.display_name = buildDisplayName(data);
+//     const tdPack = document.createElement('td');
+//     tdPack.textContent = buildCharacteristics(p);
 
-    return data;
-  }
+//     const tdCountry = document.createElement('td');
+//     tdCountry.textContent = p.country || '';
 
-  // =========================
-  // OPEN
-  // =========================
-  function open(product = null) {
-    drawer.classList.add('product-drawer--open');
+//     const tdZone = document.createElement('td');
+//     tdZone.textContent = storageZoneMap[p.storage_zone] || '';
 
-    const inner = drawer.querySelector('.product-drawer__inner');
-    inner.scrollTop = 0;
+//     const tdActions = document.createElement('td');
 
-    const cloneBtn = drawer.querySelector('#saveAsNew');
+//     const wrap = document.createElement('div');
+//     wrap.className = 'actions-wrapper';
 
-    // reset styles
-    Object.values(fields).forEach((input) => {
-      input.classList.remove('is-changed');
-    });
+//     // =========================
+//     // EDIT (NOW VIA CALLBACK)
+//     // =========================
+//     const edit = document.createElement('button');
+//     edit.className = 'btn btn--primary';
+//     edit.textContent = 'Змінити';
 
-    originalData = null;
-    editId = null;
+//     edit.onclick = () => openEdit(p);
 
-    // =========================
-    // CREATE MODE
-    // =========================
-    if (!product) {
-      dTitle.textContent = 'Створити продукт';
+//     // =========================
+//     // DELETE (TEMPORARY HERE)
+//     // =========================
+//     const del = document.createElement('button');
+//     del.className = 'btn btn--danger';
+//     del.textContent = 'Видалити';
 
-      Object.values(fields).forEach((f) => (f.value = ''));
-      fields.country.value = 'Україна';
+//     del.onclick = async () => {
+//       const ok = confirm(`Видалити ${p.name}?`);
+//       if (!ok) return;
 
-      cloneBtn.style.display = 'none';
-      return;
-    }
+//       await api.deleteProduct(p.id);
+//       await reload();
+//     };
 
-    // =========================
-    // EDIT MODE
-    // =========================
-    dTitle.textContent = 'Редагування';
-    editId = product.id;
+//     wrap.append(edit, del);
+//     tdActions.appendChild(wrap);
 
-    cloneBtn.style.display = 'inline-flex';
+//     row.append(
+//       tdCode,
+//       tdCategory,
+//       tdName,
+//       tdChar,
+//       tdPack,
+//       tdCountry,
+//       tdZone,
+//       tdActions
+//     );
 
-    // IMPORTANT: snapshot for diff
-    originalData = {
-      code: product.code || '',
-      name: product.name || '',
-      description: product.description || '',
-      category: product.category || '',
-      primary_packaging: product.primary_packaging || '',
-      fill_volume: product.fill_volume || '',
-      fill_dose: product.fill_dose || '',
-      units_per_pack: product.units_per_pack || '',
-      packs_per_box: product.packs_per_box || '',
-      storage_zone: product.storage_zone || '',
-      country: product.country || '',
-    };
+//     tbody.appendChild(row);
+//   });
 
-    // fill form
-    Object.keys(fields).forEach((k) => {
-      fields[k].value = product[k] || '';
-    });
-
-    // run initial diff check
-    setTimeout(markChanges, 0);
-  }
-
-  // =========================
-  // CLOSE
-  // =========================
- function close() {
-  drawer.classList.remove('product-drawer--open');
-
-  // 🔥 ВАЖНО: полностью отключаем клики
-  drawer.style.pointerEvents = 'none';
-
-  setTimeout(() => {
-    drawer.style.pointerEvents = 'auto';
-  }, 300);
-}
-
-  // =========================
-  // SAVE
-  // =========================
-  async function save() {
-    const data = collectData();
-    const errors = validateProduct(data);
-
-    const box = drawer.querySelector('#errors');
-    box.innerHTML = '';
-
-    if (errors.length) {
-      box.innerHTML = errors.map((e) => `<div>${e}</div>`).join('');
-      return;
-    }
-
-    if (editId) {
-      // const ok = confirm('Зберегти зміни?');
-      // if (!ok) return;
-
-      await api.updateProduct(editId, data);
-    } else {
-      await api.createProduct(data);
-    }
-
-    close();
-  }
-
-  // =========================
-  // SAVE AS NEW
-  // =========================
-  async function saveAsNew() {
-    const data = collectData();
-
-    // const ok = confirm('Створити новий продукт?');
-    // if (!ok) return;
-
-    delete data.id;
-
-    await api.createProduct(data);
-
-    close();
-  }
-
-  return { open, close, save, saveAsNew };
-}
+//   table.append(thead, tbody);
+// }

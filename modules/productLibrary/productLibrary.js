@@ -1,18 +1,25 @@
+// D:\my_projects\BLF_WMS\modules\productLibrary\productLibrary.js
+
 import {
   categoryMap,
   storageZoneMap,
   buildCharacteristics,
   buildShortCharacteristics,
-  buildDisplayName
+  buildDisplayName,
 } from './logic/productHelpers.js';
 
 import { validateProduct } from './logic/productValidation.js';
 import { renderTable } from './ui/productTable.js';
-import { createDrawer } from './ui/productDrawer.js';
+import { createAppModal } from '../core/ui/modal/appModal.js';
 
 export function renderProductLibrary(api) {
   const container = document.createElement('div');
   container.className = 'product-library';
+
+  // =========================
+  // MODAL (GLOBAL UI)
+  // =========================
+  const modal = createAppModal();
 
   // =========================
   // HEADER
@@ -39,116 +46,178 @@ export function renderProductLibrary(api) {
   container.appendChild(table);
 
   // =========================
-  // DRAWER
+  // FORM STATE
   // =========================
-  const drawer = document.createElement('div');
-  drawer.className = 'product-drawer';
+  let formEl = null;
+  let editId = null;
 
-  drawer.innerHTML = `
-    <div class="product-drawer__inner">
-      <h3 id="dTitle">Продукт</h3>
+  function createForm(product = null) {
+    const wrapper = document.createElement('div');
 
-      <div class="field">
-        <label>Назва</label>
-        <input id="name"/>
+    wrapper.innerHTML = `
+      <div class="product-form">
+
+        <div class="field">
+          <label>Назва</label>
+          <input id="name"/>
+        </div>
+
+        <div class="field">
+          <label>Опис</label>
+          <textarea id="description"></textarea>
+        </div>
+
+        <div class="form-row form-row--2">
+          <div class="field col">
+            <label>Код</label>
+            <input id="code"/>
+          </div>
+
+          <div class="field col">
+            <label>Категорія</label>
+            <select id="category">
+              <option value="">Оберіть</option>
+              <option value="lz">ЛЗ</option>
+              <option value="md">МВ</option>
+              <option value="vet">Вет</option>
+              <option value="diet">Дієт</option>
+              <option value="cosmetic">Косм</option>
+              <option value="other">Інше</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row form-row--3">
+          <div class="field col">
+            <label>Упак</label>
+            <input id="primary_packaging"/>
+          </div>
+
+          <div class="field col">
+            <label>Об'єм</label>
+            <input id="fill_volume"/>
+          </div>
+
+          <div class="field col">
+            <label>Доза</label>
+            <input id="fill_dose"/>
+          </div>
+        </div>
+
+        <div class="form-row form-row--2">
+          <div class="field col">
+            <label>Шт/уп</label>
+            <input id="units_per_pack"/>
+          </div>
+
+          <div class="field col">
+            <label>Уп/кор</label>
+            <input id="packs_per_box"/>
+          </div>
+        </div>
+
+        <div class="form-row form-row--2">
+          <div class="field col">
+            <label>Зона</label>
+            <select id="storage_zone">
+              <option value="">Оберіть</option>
+              <option value="A">A</option>
+              <option value="B">B</option>
+              <option value="C">C</option>
+            </select>
+          </div>
+
+          <div class="field col">
+            <label>Країна</label>
+            <input id="country"/>
+          </div>
+        </div>
+
+        <div id="errors" class="form-errors"></div>
+
+        <div class="product-form__actions">
+          <button id="save" class="btn btn--primary">ЗБЕРЕГТИ</button>
+          <button id="cancel" class="btn btn--danger">СКАСУВАТИ</button>
+        </div>
+
       </div>
+    `;
 
-      <div class="field">
-        <label>Опис</label>
-        <textarea id="description"></textarea>
-      </div>
+    const root = wrapper.firstElementChild;
 
-      <div class="form-row form-row--2">
-        <div class="field col">
-          <label>Код</label>
-          <input id="code"/>
-        </div>
+    const fields = {
+      code: root.querySelector('#code'),
+      name: root.querySelector('#name'),
+      description: root.querySelector('#description'),
+      category: root.querySelector('#category'),
+      primary_packaging: root.querySelector('#primary_packaging'),
+      fill_volume: root.querySelector('#fill_volume'),
+      fill_dose: root.querySelector('#fill_dose'),
+      units_per_pack: root.querySelector('#units_per_pack'),
+      packs_per_box: root.querySelector('#packs_per_box'),
+      storage_zone: root.querySelector('#storage_zone'),
+      country: root.querySelector('#country'),
+    };
 
-        <div class="field col">
-          <label>Категорія</label>
-          <select id="category">
-            <option value="">Оберіть</option>
-            <option value="lz">ЛЗ</option>
-            <option value="md">МВ</option>
-            <option value="vet">Вет</option>
-            <option value="diet">Дієт</option>
-            <option value="cosmetic">Косм</option>
-            <option value="other">Інше</option>
-          </select>
-        </div>
-      </div>
+    function fill(data = {}) {
+      Object.keys(fields).forEach((k) => {
+        fields[k].value = data[k] || '';
+      });
+    }
 
-      <div class="form-row form-row--3">
-        <div class="field col">
-          <label>Упак</label>
-          <input id="primary_packaging"/>
-        </div>
+    function collect() {
+      const data = {};
+      Object.keys(fields).forEach((k) => {
+        data[k] = fields[k].value.trim();
+      });
 
-        <div class="field col">
-          <label>Об'єм</label>
-          <input id="fill_volume"/>
-        </div>
+      data.display_name = buildDisplayName(data);
+      return data;
+    }
 
-        <div class="field col">
-          <label>Доза</label>
-          <input id="fill_dose"/>
-        </div>
-      </div>
+    // init values
+    if (product) {
+      editId = product.id;
+      fill(product);
+    } else {
+      editId = null;
+      fill();
+      fields.country.value = 'Україна';
+    }
 
-      <div class="form-row form-row--2">
-        <div class="field col">
-          <label>Шт/уп</label>
-          <input id="units_per_pack"/>
-        </div>
+    // events
+    root.querySelector('#cancel').onclick = () => {
+      modal.close();
+    };
 
-        <div class="field col">
-          <label>Уп/кор</label>
-          <input id="packs_per_box"/>
-        </div>
-      </div>
+    root.querySelector('#save').onclick = async () => {
+      const data = collect();
 
-      <div class="form-row form-row--2">
-        <div class="field col">
-          <label>Зона</label>
-          <select id="storage_zone">
-            <option value="">Оберіть</option>
-            <option value="A">A</option>
-            <option value="B">B</option>
-            <option value="C">C</option>
-          </select>
-        </div>
+      const errors = validateProduct(data);
 
-        <div class="field col">
-          <label>Країна</label>
-          <input id="country"/>
-        </div>
-      </div>
+      const box = root.querySelector('#errors');
+      box.innerHTML = '';
 
-      <div id="errors" class="form-errors"></div>
+      if (errors.length) {
+        box.innerHTML = errors.map((e) => `<div>${e}</div>`).join('');
+        return;
+      }
 
-      <div class="product-drawer__actions">
-        <button id="save" class="btn btn--primary">ЗБЕРЕГТИ</button>
-        <button id="saveAsNew" class="btn btn--warning">ЗБЕРЕГТИ ЯК НОВИЙ</button>
-        <button id="cancel" class="btn btn--danger">СКАСУВАТИ</button>
-      </div>
-    </div>
-  `;
+      if (editId) {
+        await api.updateProduct(editId, data);
+      } else {
+        await api.createProduct(data);
+      }
 
-  container.appendChild(drawer);
+      modal.close();
+      await load();
+    };
+
+    return root;
+  }
 
   // =========================
-  // DRAWER CONTROLLER
-  // =========================
-  const drawerController = createDrawer({
-    drawer,
-    api,
-    validateProduct,
-    buildDisplayName,
-    reload: load,
-  });
-
-  // =========================
-  // LOAD TABLE
+  // LOAD
   // =========================
   async function load() {
     const products = await api.getProducts();
@@ -160,30 +229,37 @@ export function renderProductLibrary(api) {
       storageZoneMap,
       buildCharacteristics,
       buildShortCharacteristics,
-      drawerController,
+      openEdit,
       api,
       reload: load,
     });
   }
 
   // =========================
+  // OPEN MODAL
+  // =========================
+  function openCreate() {
+    const form = createForm(null);
+
+    modal.open({
+      title: 'Створити продукт',
+      content: form,
+    });
+  }
+
+  function openEdit(product) {
+    const form = createForm(product);
+
+    modal.open({
+      title: 'Редагування продукту',
+      content: form,
+    });
+  }
+
+  // =========================
   // EVENTS
   // =========================
-  addBtn.onclick = () => drawerController.open();
-
-  drawer.querySelector('#save').onclick = async () => {
-    await drawerController.save();
-    await load();
-  };
-
-  drawer.querySelector('#saveAsNew').onclick = async () => {
-    await drawerController.saveAsNew();
-    await load();
-  };
-
-  drawer.querySelector('#cancel').onclick = () => {
-    drawerController.close();
-  };
+  addBtn.onclick = openCreate;
 
   load();
 

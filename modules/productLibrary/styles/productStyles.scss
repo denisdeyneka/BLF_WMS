@@ -1,3 +1,12 @@
-h4 {
-    text-align: center;
+.product-library {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.product-header {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
 }

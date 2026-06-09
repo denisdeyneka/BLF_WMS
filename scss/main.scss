@@ -13,7 +13,8 @@
 @import './components/drawer';
 @import './components/inputs';
 
-@import './pages/product-library';
+// стили модально окна:
+@import "../modules/core/ui/modal/modal.scss";
 
 // Стили модулей. подключать сюда стили отдельніх модулей
 @import '../modules/productLibrary/styles/productStyles.scss';
