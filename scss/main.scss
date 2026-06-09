@@ -14,3 +14,6 @@
 @import './components/inputs';
 
 @import './pages/product-library';
+
+// Стили модулей. подключать сюда стили отдельніх модулей
+@import '../modules/productLibrary/styles/productStyles.scss';
